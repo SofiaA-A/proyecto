@@ -33,3 +33,7 @@ npm run build
 ```sh
 npm run lint
 ```
+
+
+###version node en el front
+###V22.15.1
