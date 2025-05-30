@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
      * Definir asociaciones entre modelos
      */
     static associate(models) {
-      Car.belongsTo(models.User, { foreignKey: 'user_id' });
+      Car.belongsTo(models.Users, { foreignKey: 'user_id' });
       Car.hasMany(models.Route, { foreignKey: 'car_id' });
     }
   }

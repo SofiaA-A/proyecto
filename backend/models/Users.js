@@ -2,25 +2,25 @@
 const { Model } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-  class User extends Model {
+  class Users extends Model {
     /**
      * Asociaciones
      */
     static associate(models) {
       // Un usuario tiene un auto
-      User.hasOne(models.Car, { foreignKey: 'user_id' });
+      //User.hasOne(models.Car, { foreignKey: 'user_id' });
     }
   }
 
-  User.init({
+  Users.init({
     name: DataTypes.STRING,
     email: DataTypes.STRING,
     password: DataTypes.STRING,
     role: DataTypes.STRING
   }, {
     sequelize,
-    modelName: 'User',
+    modelName: 'Users',
   });
 
-  return User;
+  return Users;
 };

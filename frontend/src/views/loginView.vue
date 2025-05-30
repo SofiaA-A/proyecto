@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <div style="text-align: center; margin-top: 50px;">
     <h2>Login</h2>
-    <input v-model="email" placeholder="Correo" />
-    <input v-model="password" type="password" placeholder="Contraseña" />
+    <input v-model="email" placeholder="Correo" /><br><br>
+    <input v-model="password" type="password" placeholder="Contraseña" /><br><br>
     <button @click="login">Ingresar</button>
-    <p v-if="error">{{ error }}</p>
+    <p v-if="error" style="color: red;">{{ error }}</p>
   </div>
 </template>
 
