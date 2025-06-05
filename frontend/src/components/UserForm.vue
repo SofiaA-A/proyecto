@@ -4,22 +4,22 @@
 
     <div class="mb-4">
       <label class="block mb-1 font-medium">Nombre</label>
-      <input v-model="users.name" type="text" class="w-full p-2 border rounded" />
+      <input v-model="user.name" type="text" class="w-full p-2 border rounded" />
     </div>
 
     <div class="mb-4">
       <label class="block mb-1 font-medium">Correo</label>
-      <input v-model="users.email" type="email" class="w-full p-2 border rounded" />
+      <input v-model="user.email" type="email" class="w-full p-2 border rounded" />
     </div>
 
     <div class="mb-4">
       <label class="block mb-1 font-medium">Contraseña</label>
-      <input v-model="users.password" type="password" class="w-full p-2 border rounded" />
+      <input v-model="user.password" type="password" class="w-full p-2 border rounded" />
     </div>
 
     <div class="mb-4">
       <label class="block mb-1 font-medium">Rol</label>
-      <input v-model="users.rol" type="text" class="w-full p-2 border rounded" />
+      <input v-model="user.role" type="text" class="w-full p-2 border rounded" />
     </div>
 
     <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
@@ -39,7 +39,7 @@ export default {
         name: "",
         email: "",
         password: "",
-        rol: ""
+        role: ""
       }
     }
   },

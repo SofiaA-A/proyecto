@@ -17,7 +17,7 @@ const router = createRouter({
   routes
 })
 
-// Proteger rutas según rol
+// Proteger rutas según role
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
   const role = localStorage.getItem('role')

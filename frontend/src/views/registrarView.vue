@@ -20,9 +20,9 @@
 
       <div class="mb-6">
         <label class="block mb-1 font-medium">Rol</label>
-        <select v-model="user.rol" class="w-full p-2 border rounded" required>
+        <select v-model="user.role" class="w-full p-2 border rounded" required>
           <option disabled value="">Selecciona un rol</option>
-          <option value="usuario">Usuario</option>
+          <option value="client">Cliente</option>
           <option value="admin">Admin</option>
         </select>
       </div>
@@ -45,7 +45,7 @@ export default {
         name: '',
         email: '',
         password: '',
-        rol: ''
+        role: ''
       }
     }
   },
@@ -54,7 +54,7 @@ export default {
       try {
         const response = await axios.post('http://localhost:3000/api/users', this.user)
         alert('Usuario registrado con éxito')
-        this.user = { name: '', email: '', password: '', rol: '' } // Limpia formulario
+        this.user = { name: '', email: '', password: '', role: '' } // Limpia formulario
         this.$router.push('/') // Redirige al login (opcional)
       } catch (error) {
         console.error('Error al registrar usuario:', error)

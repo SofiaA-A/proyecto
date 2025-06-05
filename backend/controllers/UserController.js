@@ -3,7 +3,7 @@ const { User } = require('../models')
 const bcrypt = require('bcrypt')
 
 exports.crearUsuario = async (req, res) => {
-  const { name, email, password, rol } = req.body
+  const { name, email, password, role } = req.body
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10)
@@ -12,7 +12,7 @@ exports.crearUsuario = async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      rol
+      role
     })
 
     res.status(201).json({ message: 'Usuario creado correctamente', user: nuevoUsuario })
