@@ -1,7 +1,11 @@
-const { STRING } = require("sequelize")
-
+// models/car.js
 module.exports = (sequelize, DataTypes) => {
   const Car = sequelize.define('Car', {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
+    },
     brand: {
       type: DataTypes.STRING,
       allowNull: false
@@ -16,16 +20,22 @@ module.exports = (sequelize, DataTypes) => {
       unique: true
     },
     image: {
-      type: DataTypes,STRING,
-      allowNull: true
+      type: DataTypes.STRING
     },
     user_id: {
       type: DataTypes.INTEGER,
       allowNull: false
     }
   }, {
-    tableName: 'Cars'
-  })
+    tableName: 'Cars',
+    timestamps: true,
+    paranoid: true,  // activa soft delete con deletedAt
+  });
 
-  return Car
-}
+  // Asociaciones si tienes modelo User
+  Car.associate = function(models) {
+    Car.belongsTo(models.User, { foreignKey: 'user_id', as: 'owner' });
+  };
+
+  return Car;
+};

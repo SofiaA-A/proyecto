@@ -41,6 +41,8 @@ sequelize.authenticate()
     app.listen(PORT, () => {
       console.log(`Servidor corriendo en http://localhost:${PORT}`);
     });
+    console.log('Usuario de la base de datos:', process.env.DB_USER);
+
   })
   .catch((err) => {
     console.error('Error al conectar a la base de datos:', err);
@@ -48,7 +50,9 @@ sequelize.authenticate()
 
 // 9 Rutas
 app.use('/api/auth', require('./routes/auth'));
-app.use('/api/recorridos', require('./routes/recorridos'));
+// app.use('/api/recorridos', require('./routes/recorridos'));
 app.use('/api/cars', require('./routes/carRoutes'));
+app.use('/api/users', require('./routes/user'));
 
-
+  
+ 
