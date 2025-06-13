@@ -5,6 +5,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { Sequelize } = require('sequelize');
+const multer = require('multer');
 
 // 3 Instancia de Express
 const app = express();
@@ -50,8 +51,8 @@ sequelize.authenticate()
 
 // 9 Rutas
 app.use('/api/auth', require('./routes/auth'));
-// app.use('/api/recorridos', require('./routes/recorridos'));
-app.use('/api/cars', require('./routes/carRoutes'));
+app.use('/api/route', require('./routes/route'));
+app.use('/api/car', require('./routes/car'));
 app.use('/api/users', require('./routes/user'));
 
   
