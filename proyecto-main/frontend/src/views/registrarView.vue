@@ -1,70 +1,39 @@
 <template>
-  <div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md mt-10">
-    <h2 class="text-2xl font-bold mb-4 text-center">Registrar Usuario</h2>
-
-    <form @submit.prevent="registrarUsuario">
-      <div class="mb-4">
-        <label class="block mb-1 font-medium">Nombre</label>
-        <input v-model="user.name" type="text" class="w-full p-2 border rounded" required />
-      </div>
-
-      <div class="mb-4">
-        <label class="block mb-1 font-medium">Correo</label>
-        <input v-model="user.email" type="email" class="w-full p-2 border rounded" required />
-      </div>
-
-      <div class="mb-4">
-        <label class="block mb-1 font-medium">Contraseña</label>
-        <input v-model="user.password" type="password" class="w-full p-2 border rounded" required />
-      </div>
-
-      <div class="mb-6">
-        <label class="block mb-1 font-medium">Rol</label>
-        <select v-model="user.role" class="w-full p-2 border rounded" required>
-          <option disabled value="">Selecciona un rol</option>
-          <option value="client">Cliente</option>
-          <option value="admin">Admin</option>
-        </select>
-      </div>
-
-      <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-        Registrar Usuario
-      </button>
+  <div>
+    <h2>Registrar usuario</h2>
+    <form @submit.prevent="register">
+      <input v-model="name" placeholder="Nombre" required />
+      <input v-model="email" type="email" placeholder="Correo" required />
+      <input v-model="password" type="password" placeholder="Contraseña" required />
+      <button type="submit">Registrar</button>
     </form>
+    <p v-if="message">{{ message }}</p>
   </div>
 </template>
 
-<script>
-import axios from 'axios'
+<script setup>
+import { ref } from 'vue';
+import api from '../axios';
+import { useRouter } from 'vue-router';
 
-export default {
-  name: 'RegistrarView',
-  data() {
-    return {
-      user: {
-        name: '',
-        email: '',
-        password: '',
-        role: ''
-      }
-    }
-  },
-  methods: {
-    async registrarUsuario() {
-      try {
-        const response = await axios.post('http://localhost:3000/api/users', this.user)
-        alert('Usuario registrado con éxito')
-        this.user = { name: '', email: '', password: '', role: '' } // Limpia formulario
-        this.$router.push('/') // Redirige al login (opcional)
-      } catch (error) {
-        console.error('Error al registrar usuario:', error)
-        alert('Ocurrió un error al registrar el usuario')
-      }
-    }
+const name = ref('');
+const email = ref('');
+const password = ref('');
+const message = ref('');
+const router = useRouter();
+
+const register = async () => {
+  try {
+    await api.post('/auth/register', {
+      name: name.value,
+      email: email.value,
+      password: password.value,
+      role: 'client', // o según corresponda
+    });
+    message.value = 'Registro exitoso. Redirigiendo...';
+    setTimeout(() => router.push('/login'), 2000);
+  } catch (err) {
+    message.value = 'Error al registrar.';
   }
-}
+};
 </script>
-
-<style scoped>
-/* Puedes agregar estilos personalizados aquí */
-</style>

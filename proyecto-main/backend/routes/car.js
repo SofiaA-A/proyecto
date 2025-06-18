@@ -1,4 +1,4 @@
-// routes/carRoutes.js
+// routes/car.js
 const express = require('express');
 const router = express.Router();
 const carController = require('../controllers/carController');
@@ -14,5 +14,8 @@ router.put('/:id', carController.updateCar);
 
 // Ruta para eliminar un auto
 router.delete('/:id', carController.deleteCar);
+
+// Ruta para obtener el auto por el ID del usuario
+router.get('/user/:userId', carController.getCarByUserId);
 
 module.exports = router;

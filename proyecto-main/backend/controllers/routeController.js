@@ -1,6 +1,7 @@
 const { Route } = require('../models');
 
 module.exports = {
+  // Obtener todas las rutas
   async getAll(req, res) {
     try {
       const routes = await Route.findAll({ include: ['car', 'user'] });
@@ -10,6 +11,7 @@ module.exports = {
     }
   },
 
+  // Obtener ruta por ID
   async getById(req, res) {
     try {
       const route = await Route.findByPk(req.params.id, { include: ['car', 'user'] });
@@ -20,10 +22,11 @@ module.exports = {
     }
   },
 
+  // Crear nueva ruta
   async create(req, res) {
     try {
-      const { length, latitude, car_id, user_id } = req.body;
-      const route = await Route.create({ length, latitude, car_id, user_id });
+      const { longitude, latitude, car_id, user_id } = req.body;
+      const route = await Route.create({ longitude, latitude, car_id, user_id });
       res.status(201).json(route);
     } catch (err) {
       console.error(err);
@@ -31,6 +34,7 @@ module.exports = {
     }
   },
 
+  // Actualizar ruta existente
   async update(req, res) {
     try {
       const { id } = req.params;
@@ -43,6 +47,7 @@ module.exports = {
     }
   },
 
+  // Eliminar ruta
   async delete(req, res) {
     try {
       const { id } = req.params;
@@ -52,6 +57,20 @@ module.exports = {
       res.json({ message: 'Ruta eliminada correctamente' });
     } catch (err) {
       res.status(500).json({ error: 'Error al eliminar la ruta' });
+    }
+  },
+
+  // Obtener rutas por userId
+  async getRoutesByUserId(req, res) {
+    try {
+      const userId = req.params.userId;
+      const routes = await Route.findAll({
+        where: { user_id: userId },
+        order: [['createdAt', 'ASC']]
+      });
+      res.json(routes);
+    } catch (err) {
+      res.status(500).json({ error: 'Error al obtener las rutas del usuario' });
     }
   }
 };

@@ -9,7 +9,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      length: {
+      longitude: {
         type: Sequelize.DOUBLE
       },
       latitude: {

@@ -1,7 +1,7 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Route = sequelize.define('Route', {
-    length: DataTypes.DOUBLE,
+    longitude: DataTypes.DOUBLE,
     latitude: DataTypes.DOUBLE,
     car_id: DataTypes.INTEGER,  
     user_id: DataTypes.INTEGER,

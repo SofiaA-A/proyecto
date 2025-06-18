@@ -6,6 +6,7 @@ const express = require('express');
 const cors = require('cors');
 const { Sequelize } = require('sequelize');
 const multer = require('multer');
+const load = multer({dest:'uploads'})
 
 // 3 Instancia de Express
 const app = express();

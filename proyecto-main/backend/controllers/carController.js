@@ -41,6 +41,20 @@ const carController = {
       res.status(500).json({ message: 'Error al eliminar auto' });
     }
   },
-};
+  getCarByUserId: async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const car = await Car.findOne({ where: { user_id: userId } });
 
+      if (!car) {
+        return res.status(404).json({ message: 'Carro no encontrado para este usuario' });
+      }
+
+      res.json(car);
+    } catch (error) {
+      console.error('Error al obtener el carro por usuario:', error);
+      res.status(500).json({ message: 'Error del servidor' });
+    }
+  },
+};
 module.exports = carController;

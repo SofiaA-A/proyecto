@@ -1,51 +1,36 @@
 <template>
-  <div style="text-align: center; margin-top: 50px;" class="justify-content: center; mt-5">
-    <h2>Login</h2>
-    <input v-model="email" placeholder="Correo" /><br><br>
-    <input v-model="password" type="password" placeholder="Contraseña" /><br><br>
-    <button @click="login">Ingresar</button>
-    <p v-if="error" style="color: red;">{{ error }}</p>
+  <div>
+    <h2>Iniciar sesión</h2>
+    <form @submit.prevent="login">
+      <input v-model="email" type="email" placeholder="Correo" required />
+      <input v-model="password" type="password" placeholder="Contraseña" required />
+      <button type="submit">Entrar</button>
+    </form>
+    <p v-if="error" style="color:red;">{{ error }}</p>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import api from '../axios'
+import { ref } from 'vue';
+import api from '../axios';
+import { useRouter } from 'vue-router';
 
-const email = ref('')
-const password = ref('')
-const error = ref('')
-const router = useRouter()
+const email = ref('');
+const password = ref('');
+const error = ref('');
+const router = useRouter();
 
 const login = async () => {
   try {
-    const res = await api.post('/auth/login', {
-      email: email.value,
-      password: password.value
-    })
-
-    localStorage.setItem('token', res.data.token)
-    localStorage.setItem('role', res.data.role)
-
-    // 🔽 Aquí haces la petición para listar los autos
-    const token = res.data.token
-    const carRes = await api.get('/cars', {
-      headers: {
-        Authorization: token
-      }
-    })
-
-    console.log('Autos del usuario:', carRes.data)
-
-    // 🔽 Redirección después de login
+    const res = await api.post('/auth/login', { email: email.value, password: password.value });
+    localStorage.setItem('user', JSON.stringify(res.data));
     if (res.data.role === 'admin') {
-      router.push('/admin')
+      router.push('/admin');
     } else {
-      router.push('/usuario')
+      router.push('/client');
     }
-  } catch (err) {
-    error.value = err.response?.data?.msg || 'Error al iniciar sesión'
+  } catch (error) {
+    error.value = 'Credenciales incorrectas';
   }
-}
+};
 </script>
