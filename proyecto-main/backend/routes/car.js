@@ -1,21 +1,25 @@
-// routes/car.js
 const express = require('express');
 const router = express.Router();
 const carController = require('../controllers/carController');
+const multer = require('multer');
 
-// Ruta para obtener todos los autos
+// Configuración multer
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+const upload = multer({ storage });
+
+// Rutas
 router.get('/', carController.getAllCars);
-
-// Ruta para crear un auto
-router.post('/', carController.createCar);
-
-// Ruta para actualizar un auto
-router.put('/:id', carController.updateCar);
-
-// Ruta para eliminar un auto
+router.get('/:id', carController.getCarById);
+router.post('/', upload.single('image'), carController.createCar);
+router.put('/:id', upload.single('image'), carController.updateCar);
 router.delete('/:id', carController.deleteCar);
-
-// Ruta para obtener el auto por el ID del usuario
 router.get('/user/:userId', carController.getCarByUserId);
 
 module.exports = router;

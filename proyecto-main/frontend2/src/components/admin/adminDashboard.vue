@@ -1,8 +1,5 @@
 <template>
   <div>
-    <center><h2> Bienvenido al Panel de Administrador </h2></center>
-    <center><p>Desde aqui puedes ver los datos de los usuarios</p></center>
-
     <div class="carousel">
       <div
         class="carousel-inner"

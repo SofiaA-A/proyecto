@@ -15,6 +15,7 @@ const PORT = process.env.PORT || 3000;
 // 4 Middleware global
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static('uploads'));
 
 // 5 Conexión a la base de datos usando .env
 const sequelize = new Sequelize(

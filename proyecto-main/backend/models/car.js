@@ -34,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
 
   // Asociaciones si tienes modelo User
   Car.associate = function(models) {
-    Car.belongsTo(models.User, { foreignKey: 'user_id', as: 'owner' });
+    Car.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
   };
 
   return Car;

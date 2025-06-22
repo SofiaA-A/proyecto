@@ -1,7 +1,5 @@
 <template>
   <div>
-    <center><h2> Bienvenido al Panel del Cliente </h2></center>
-    <center><p>Desde este panel puedes consultar la información de tu vehículo y su ruta asignada.</p></center>
 
     <div class="carousel">
       <div
