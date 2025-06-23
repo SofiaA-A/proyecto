@@ -16,7 +16,16 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     }
-  });
+  }, 
+  {
+  paranoid: true,       
+    timestamps: true,
+    deletedAt: 'deletedAt'
+   });
 
+   User.associate = function(models) {
+    User.hasMany(models.Car, { foreignKey: 'user_id', as: 'cars' });
+  };
+  
   return User;
 };

@@ -18,6 +18,10 @@ module.exports = {
       plate: {
         type: Sequelize.STRING
       },
+      image:{
+        type: Sequelize.STRING,
+         allowNull: true
+      },
       user_id: {
         type: Sequelize.INTEGER
       },
@@ -27,6 +31,10 @@ module.exports = {
       },
       updatedAt: {
         allowNull: false,
+        type: Sequelize.DATE
+      },
+      deletedAt: {
+        allowNull: true,
         type: Sequelize.DATE
       }
     });
