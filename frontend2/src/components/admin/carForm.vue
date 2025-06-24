@@ -94,9 +94,16 @@ export default {
           await axios.post('http://localhost:3000/api/car', formData, config);
         }
 
+        alert('Carro guardado exitosamente');
         this.$router.push('/admin/cars');
+
       } catch (error) {
-        console.error('Error guardando carro:', error.response?.data || error);
+        if (error.response && error.response.status === 400) {
+          alert(error.response.data.message || 'Error de validación');
+        } else {
+          console.error('Error guardando carro:', error);
+          alert('Error inesperado al guardar el carro');
+        }
       }
     },
   },

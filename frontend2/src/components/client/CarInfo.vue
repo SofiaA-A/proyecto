@@ -2,7 +2,7 @@
   <div class="car-info">
     <h2>Auto asignado</h2>
     <div v-if="car">
-      <img :src="car.image" alt="Imagen del auto" style="width: 300px;" />
+      <img :src="`http://localhost:3000${car.image}`" alt="Imagen del auto" style="width: 300px;" />
       <p><strong>Marca:</strong> {{ car.brand }}</p>
       <p><strong>Modelo:</strong> {{ car.model }}</p>
       <p><strong>Placa:</strong> {{ car.plate }}</p>

@@ -16,7 +16,8 @@ module.exports = {
         type: Sequelize.STRING
       },
       plate: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true
       },
       image:{
         type: Sequelize.STRING,

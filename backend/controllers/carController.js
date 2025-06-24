@@ -62,6 +62,12 @@ const carController = {
       res.status(201).json(car);
     } catch (err) {
       console.error('Error al crear auto:', err);
+
+      // Validación de placa duplicada
+      if (err.name === 'SequelizeUniqueConstraintError') {
+        return res.status(400).json({ message: 'La placa ya está registrada' });
+      }
+
       res.status(500).json({ message: 'Error al crear auto' });
     }
   },
@@ -90,6 +96,12 @@ const carController = {
       res.json({ message: 'Auto actualizado' });
     } catch (err) {
       console.error('Error al actualizar auto:', err);
+
+      // Validación de placa duplicada también para actualización
+      if (err.name === 'SequelizeUniqueConstraintError') {
+        return res.status(400).json({ message: 'La placa ya está registrada' });
+      }
+
       res.status(500).json({ message: 'Error al actualizar auto' });
     }
   },

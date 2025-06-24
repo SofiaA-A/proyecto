@@ -1,6 +1,10 @@
 <template>
   <div class="user-list">
     <h2>Lista de Usuarios</h2>
+    <!-- Botón para agregar nuevo auto -->
+    <div class="mb-4">
+      <button class="btn new" @click="$router.push('/admin/users/new')">+ Nuevo Usuario</button>
+    </div>
 
     <table>
       <thead>
@@ -78,5 +82,20 @@ th {
 
 tr:hover {
   background-color: #f9fafb;
+}
+.new {
+  background-color: #10b981;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  color: white;
+  transition: background-color 0.2s ease;
+}
+
+.new:hover {
+  background-color: #059669;
 }
 </style>

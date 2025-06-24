@@ -31,6 +31,7 @@ const routes = [
       { path: '', redirect: 'dashboard' }, // Redirige a dashboard por defecto
       { path: 'dashboard', component: adminDashboard }, // Vista principal
       { path: 'users', component: UserList },
+      { path: 'users/new', component: () => import('../components/admin/userForm.vue') },
       { path: 'cars', component: CarList },
       { path: 'cars/new', component: CarForm },
       {
