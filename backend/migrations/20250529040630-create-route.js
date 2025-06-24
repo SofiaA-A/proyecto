@@ -9,16 +9,16 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      description: {
-        type: Sequelize.STRING
+      longitude: {
+        type: Sequelize.DOUBLE
       },
-      distance: {
-        type: Sequelize.FLOAT
-      },
-      date: {
-        type: Sequelize.DATE
+      latitude: {
+        type: Sequelize.DOUBLE
       },
       car_id: {
+        type: Sequelize.INTEGER
+      },
+      user_id: {
         type: Sequelize.INTEGER
       },
       createdAt: {
@@ -27,6 +27,10 @@ module.exports = {
       },
       updatedAt: {
         allowNull: false,
+        type: Sequelize.DATE
+      },
+      deletedAt: {
+        allowNull: true,
         type: Sequelize.DATE
       }
     });
