@@ -1,5 +1,3 @@
-// src/router/index.js
-
 import { createRouter, createWebHistory } from 'vue-router'
 
 // Vistas principales
@@ -27,18 +25,15 @@ const routes = [
   {
     path: '/admin',
     component: AdminView,
+    meta: { requiresAuth: true, role: 'admin' },
     children: [
-      { path: '', redirect: 'dashboard' }, // Redirige a dashboard por defecto
-      { path: 'dashboard', component: adminDashboard }, // Vista principal
+      { path: '', redirect: 'dashboard' },
+      { path: 'dashboard', component: adminDashboard },
       { path: 'users', component: UserList },
       { path: 'users/new', component: () => import('../components/admin/userForm.vue') },
       { path: 'cars', component: CarList },
       { path: 'cars/new', component: CarForm },
-      {
-        path: 'cars/edit/:id',
-        component: CarForm,
-        props: true // Habilita el paso del ID como prop
-      },
+      { path: 'cars/edit/:id', component: CarForm, props: true },
       { path: 'routes', component: RouteList }
     ]
   },
@@ -47,6 +42,7 @@ const routes = [
   {
     path: '/client',
     component: ClientView,
+    meta: { requiresAuth: true, role: 'cliente' },
     children: [
       { path: '', redirect: 'dashboard' },
       { path: 'dashboard', component: dashboard },
@@ -59,6 +55,30 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes
+})
+
+// 🛡️ Guard global para proteger rutas
+router.beforeEach((to, from, next) => {
+  const user = JSON.parse(localStorage.getItem('user'))
+  const isAuthenticated = !!user
+
+  // Si la ruta necesita autenticación y no está logueado
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    return next('/login')
+  }
+
+  // Si ya está logueado e intenta ir al login
+  if (to.path === '/login' && isAuthenticated) {
+    if (user.role === 'admin') return next('/admin/dashboard')
+    if (user.role === 'cliente') return next('/client/dashboard')
+  }
+
+  // Si intenta entrar a una ruta que no es de su rol
+  if (to.meta.role && user && to.meta.role !== user.role) {
+    return user.role === 'admin' ? next('/admin/dashboard') : next('/client/dashboard')
+  }
+
+  next()
 })
 
 export default router
