@@ -6,6 +6,7 @@
       <p><strong>Marca:</strong> {{ car.brand }}</p>
       <p><strong>Modelo:</strong> {{ car.model }}</p>
       <p><strong>Placa:</strong> {{ car.plate }}</p>
+      <P><strong>Año:</strong> {{ car.year }}</P>
     </div>
     <div v-else>
       <p>No se encontró ningún auto asignado.</p>

@@ -17,6 +17,7 @@
           <th>Marca</th>
           <th>Modelo</th>
           <th>Placa</th>
+          <th>Año</th>
           <th>Imagen</th>
           <th>Propietario</th>
           <th>Acciones</th>
@@ -28,6 +29,7 @@
           <td>{{ car.brand }}</td>
           <td>{{ car.model }}</td>
           <td>{{ car.plate }}</td>
+          <td>{{ car.year }}</td>
           <td>
             <img v-if="car.image" :src="`http://localhost:3000${car.image}`" alt="Auto" width="80" style="border-radius: 6px;" />
             <span v-else>Sin imagen</span>
@@ -66,6 +68,7 @@ export default {
           brand: car.brand || 'N/A',
           model: car.model || 'N/A',
           plate: car.plate || 'N/A',
+          year: car.year   || 'N/A',
           image: car.image || null,
           ownerName: car.user ? car.user.name : 'Sin propietario',
         }));

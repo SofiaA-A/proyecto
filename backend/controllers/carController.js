@@ -43,9 +43,9 @@ const carController = {
   // Crear un nuevo auto
   createCar: async (req, res) => {
     try {
-      const { brand, model, plate, user_id } = req.body;
+      const { brand, model, plate,year, user_id } = req.body;
 
-      if (!brand || !model || !plate) {
+      if (!brand || !model || !plate || !year) {
         return res.status(400).json({ message: 'Faltan datos requeridos' });
       }
 
@@ -55,6 +55,7 @@ const carController = {
         brand,
         model,
         plate,
+        year,
         user_id,
         image: imagePath
       });
@@ -76,7 +77,7 @@ const carController = {
   updateCar: async (req, res) => {
     try {
       const { id } = req.params;
-      const { brand, model, plate, user_id } = req.body;
+      const { brand, model, plate, year, user_id } = req.body;
 
       const car = await Car.findByPk(id);
       if (!car) {
@@ -89,6 +90,7 @@ const carController = {
         brand,
         model,
         plate,
+        year,
         user_id,
         image: imagePath
       });

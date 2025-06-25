@@ -21,8 +21,8 @@
         <label>Rol:</label>
         <select v-model="user.role" required>
           <option disabled value="">Seleccione un rol</option>
-          <option value="admin">Admin</option>
-          <option value="cliente">Cliente</option>
+          <option value="admin">Administrador</option>
+          <option value="client">Cliente</option>
         </select>
       </div>
 

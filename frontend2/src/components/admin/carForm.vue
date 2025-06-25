@@ -11,6 +11,9 @@
       <label>Placa:</label>
       <input v-model="car.plate" type="text" required />
 
+      <label>Año:</label>
+      <input v-model="car.year" type="text" required />
+
       <label>Propietario:</label>
       <select v-model="car.user_id" required>
         <option value="" disabled>Seleccione un propietario</option>
@@ -37,6 +40,7 @@ export default {
         brand: '',
         model: '',
         plate: '',
+        year: '',
         image: '',
         user_id: null,
       },
@@ -79,6 +83,7 @@ export default {
         formData.append('brand', this.car.brand);
         formData.append('model', this.car.model);
         formData.append('plate', this.car.plate);
+        formData.append('year', this.car.year);
         formData.append('user_id', this.car.user_id);
         if (this.imageFile) {
           formData.append('image', this.imageFile);

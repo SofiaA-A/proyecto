@@ -1,13 +1,26 @@
 <template>
-  <div>
-    <h2> Ruta del Carro</h2>
-    <p>Aquí se mostrará la ruta del vehículo asignado al cliente.</p>
-    <!-- Puedes agregar un mapa o lista de puntos de ruta si tienes datos -->
+  <div style="height: 500px; width: 100%;">
+    <GMapMap
+      :center="origin"
+      :zoom="10"
+      style="width: 100%; height: 100%"
+    >
+      <GMapMarker :position="car.latitude" label="Inicio" />
+      <GMapMarker :position="car.logitude" label="Destino" />
+
+      <!-- Dibuja la ruta -->
+      <GMapDirections
+        :origin="origin"
+        :destination="destination"
+        :travelMode="'DRIVING'"
+      />
+    </GMapMap>
   </div>
 </template>
 
-<script>
-export default {
-  name: 'CarRoute'
-}
+<script setup>
+import { ref } from 'vue'
+
+const origin = ref({ log: car.logitude })
+const destination = ref({ lat: car.latitude})
 </script>
