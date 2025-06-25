@@ -25,7 +25,6 @@ const routes = [
   {
     path: '/admin',
     component: AdminView,
-    meta: { requiresAuth: true, role: 'admin' },
     children: [
       { path: '', redirect: 'dashboard' },
       { path: 'dashboard', component: adminDashboard },
@@ -42,7 +41,6 @@ const routes = [
   {
     path: '/client',
     component: ClientView,
-    meta: { requiresAuth: true, role: 'cliente' },
     children: [
       { path: '', redirect: 'dashboard' },
       { path: 'dashboard', component: dashboard },
@@ -57,25 +55,30 @@ const router = createRouter({
   routes
 })
 
-// 🛡️ Guard global para proteger rutas
+// GUARDIA GLOBAL
 router.beforeEach((to, from, next) => {
   const user = JSON.parse(localStorage.getItem('user'))
   const isAuthenticated = !!user
 
-  // Si la ruta necesita autenticación y no está logueado
-  if (to.meta.requiresAuth && !isAuthenticated) {
+  // Si no está logueado y no va a login
+  if (!isAuthenticated && to.path !== '/login') {
     return next('/login')
   }
 
-  // Si ya está logueado e intenta ir al login
-  if (to.path === '/login' && isAuthenticated) {
-    if (user.role === 'admin') return next('/admin/dashboard')
-    if (user.role === 'cliente') return next('/client/dashboard')
+  // Si está logueado y va a login
+  if (isAuthenticated && to.path === '/login') {
+    const home = user.role === 'admin' ? '/admin/dashboard' : '/client/dashboard'
+    return next(home)
   }
 
-  // Si intenta entrar a una ruta que no es de su rol
-  if (to.meta.role && user && to.meta.role !== user.role) {
-    return user.role === 'admin' ? next('/admin/dashboard') : next('/client/dashboard')
+  // Si es cliente e intenta ir a admin
+  if (isAuthenticated && user.role === 'cliente' && to.path.startsWith('/admin')) {
+    return next('/client/dashboard')
+  }
+
+  // Si es admin e intenta ir a cliente
+  if (isAuthenticated && user.role === 'admin' && to.path.startsWith('/client')) {
+    return next('/admin/dashboard')
   }
 
   next()
