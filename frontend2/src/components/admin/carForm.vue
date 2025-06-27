@@ -15,8 +15,8 @@
       <input v-model="car.year" type="text" required />
 
       <label>Propietario:</label>
-      <select v-model="car.user_id" required>
-        <option value="" disabled>Seleccione un propietario</option>
+      <select v-model="car.user_id">
+        <option :value="null">Sin propietario</option>
         <option v-for="user in users" :key="user.id" :value="user.id">
           {{ user.name }}
         </option>
@@ -84,7 +84,10 @@ export default {
         formData.append('model', this.car.model);
         formData.append('plate', this.car.plate);
         formData.append('year', this.car.year);
-        formData.append('user_id', this.car.user_id);
+
+        // Si user_id es null, enviamos cadena vacía para que backend lo convierta en null
+        formData.append('user_id', this.car.user_id === null ? '' : this.car.user_id);
+
         if (this.imageFile) {
           formData.append('image', this.imageFile);
         }
@@ -101,7 +104,6 @@ export default {
 
         alert('Carro guardado exitosamente');
         this.$router.push('/admin/cars');
-
       } catch (error) {
         if (error.response && error.response.status === 400) {
           alert(error.response.data.message || 'Error de validación');

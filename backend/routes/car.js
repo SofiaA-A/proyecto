@@ -14,12 +14,15 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Rutas
+// ✅ RUTAS EN ORDEN CORRECTO
+router.get('/available', carController.getAvailableCars); // <-- esta primero
+
+router.get('/user/:userId', carController.getCarByUserId);
 router.get('/', carController.getAllCars);
 router.get('/:id', carController.getCarById);
 router.post('/', upload.single('image'), carController.createCar);
 router.put('/:id', upload.single('image'), carController.updateCar);
+router.put('/:id/assign', carController.assignCarToUser);
 router.delete('/:id', carController.deleteCar);
-router.get('/user/:userId', carController.getCarByUserId);
 
 module.exports = router;

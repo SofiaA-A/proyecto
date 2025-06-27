@@ -9,6 +9,7 @@ import ClientView from '../views/client/clientView.vue'
 import dashboard from '../components/client/dashboard.vue'
 import CarInfo from '../components/client/CarInfo.vue'
 import CarRoute from '../components/client/CarRoute.vue'
+import AviableCars from '@/components/client/AviableCars.vue'
 
 // Componentes del admin
 import UserList from '../components/admin/userList.vue'
@@ -45,6 +46,7 @@ const routes = [
       { path: '', redirect: 'dashboard' },
       { path: 'dashboard', component: dashboard },
       { path: 'car-info', component: CarInfo },
+      { path: 'available-cars', component: AviableCars },
       { path: 'car-route', component: CarRoute }
     ]
   }

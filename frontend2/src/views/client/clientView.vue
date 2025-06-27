@@ -14,6 +14,7 @@
           <ul>
         <li><router-link to="/client/dashboard"> Inicio</router-link></li>
         <li><router-link to="/client/car-info"> Datos del Carro</router-link></li>
+        <li><router-link to="/client/available-cars">Autos Disponibles</router-link></li>
         <li><router-link to="/client/car-route"> Ruta</router-link></li>
         <li><a href="/login" @click="logout"> Salir</a></li>
       </ul>

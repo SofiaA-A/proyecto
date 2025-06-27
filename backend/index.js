@@ -7,6 +7,8 @@ const cors = require('cors');
 const { Sequelize } = require('sequelize');
 const multer = require('multer');
 const load = multer({dest:'uploads'})
+const carRoutes = require('./routes/car');
+
 
 // 3 Instancia de Express
 const app = express();
@@ -52,10 +54,13 @@ sequelize.authenticate()
   });
 
 // 9 Rutas
+
+app.use('/uploads', express.static('uploads'));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/route', require('./routes/route'));
 app.use('/api/car', require('./routes/car'));
 app.use('/api/users', require('./routes/user'));
+app.use('/api/cars', carRoutes);
 
   
  
