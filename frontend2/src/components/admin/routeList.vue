@@ -14,8 +14,8 @@
       <tbody>
         <tr v-for="route in routes" :key="route.id">
           <td>{{ route.id }}</td>
-          <td>{{ route.origin }}</td>
-          <td>{{ route.destination }}</td>
+          <td>{{ route.longitude }}</td>
+          <td>{{ route.latitude}}</td>
           <td>{{ route.distance }}</td>
           <td>
             <button @click="editRoute(route.id)">Editar</button>
