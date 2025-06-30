@@ -31,6 +31,7 @@ const routes = [
       { path: 'dashboard', component: adminDashboard },
       { path: 'users', component: UserList },
       { path: 'users/new', component: () => import('../components/admin/userForm.vue') },
+      {path: '/admin/routes/car/:carId',name: 'CarRouteAdmin',component: () => import('../components/admin/CarRouteAdmin.vue'),props: true},
       { path: 'cars', component: CarList },
       { path: 'cars/new', component: CarForm },
       { path: 'cars/edit/:id', component: CarForm, props: true },

@@ -14,6 +14,13 @@
       <label>Año:</label>
       <input v-model="car.year" type="text" required />
 
+       <label>latitud:</label>
+      <input v-model="car.lat" type="text" required />
+
+       <label>longitud:</label>
+      <input v-model="car.lng" type="text" required />
+
+
       <label>Propietario:</label>
       <select v-model="car.user_id">
         <option :value="null">Sin propietario</option>
@@ -41,6 +48,8 @@ export default {
         model: '',
         plate: '',
         year: '',
+        lat: '',
+        lng: '',
         image: '',
         user_id: null,
       },
@@ -84,6 +93,8 @@ export default {
         formData.append('model', this.car.model);
         formData.append('plate', this.car.plate);
         formData.append('year', this.car.year);
+        formData.append('lat', this.car.lat);
+        formData.append('lng', this.car.lng)
 
         // Si user_id es null, enviamos cadena vacía para que backend lo convierta en null
         formData.append('user_id', this.car.user_id === null ? '' : this.car.user_id);

@@ -1,4 +1,3 @@
-// models/car.js
 module.exports = (sequelize, DataTypes) => {
   const Car = sequelize.define('Car', {
     id: {
@@ -19,12 +18,17 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       unique: true
     },
-    year:{
+    year: {
       type: DataTypes.INTEGER,
       allowNull: false
     },
     image: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    latlong: {
+      type: DataTypes.GEOGRAPHY('POINT', 4326),
+      allowNull: true
     },
     user_id: {
       type: DataTypes.INTEGER,
@@ -33,10 +37,9 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     tableName: 'Cars',
     timestamps: true,
-    paranoid: true,  // activa soft delete con deletedAt
+    paranoid: true
   });
 
-  // Asociaciones si tienes modelo User
   Car.associate = function(models) {
     Car.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
   };

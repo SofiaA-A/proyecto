@@ -1,5 +1,4 @@
 'use strict';
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Cars', {
@@ -10,22 +9,29 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       brand: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       model: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       plate: {
         type: Sequelize.STRING,
-        unique: true
+        unique: true,
+        allowNull: false
       },
-      year:{
+      year: {
         type: Sequelize.INTEGER,
+        allowNull: false
+      },
+      image: {
+        type: Sequelize.STRING,
         allowNull: true
       },
-      image:{
-        type: Sequelize.STRING,
-         allowNull: true
+      latlong: {
+        type: Sequelize.GEOGRAPHY('POINT', 4326),
+        allowNull: true
       },
       user_id: {
         type: Sequelize.INTEGER,

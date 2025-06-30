@@ -1,5 +1,4 @@
 'use strict';
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Routes', {
@@ -9,17 +8,29 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      longitude: {
-        type: Sequelize.DOUBLE
-      },
-      latitude: {
-        type: Sequelize.DOUBLE
+      latlong: {
+        type: Sequelize.GEOGRAPHY('POINT', 4326),
+        allowNull: false
       },
       car_id: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Cars',
+          key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
       },
       user_id: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'Users',
+          key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
       },
       createdAt: {
         allowNull: false,
@@ -35,6 +46,7 @@ module.exports = {
       }
     });
   },
+
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Routes');
   }

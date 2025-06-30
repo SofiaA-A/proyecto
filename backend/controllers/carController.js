@@ -43,11 +43,11 @@ const carController = {
   // Crear un nuevo auto
   createCar: async (req, res) => {
     try {
-      const { brand, model, plate, year } = req.body;
+      const { brand, model, plate, year, lat, lng } = req.body;
       let { user_id } = req.body;
 
-      if (!brand || !model || !plate || !year) {
-        return res.status(400).json({ message: 'Faltan datos requeridos' });
+      if (!brand || !model || !plate || !year || !lat || !lng) {
+        return res.status(400).json({ message: 'Faltan datos requeridos (marca, modelo, placa, año, lat, lng)' });
       }
 
       // Validar y convertir user_id a null si es vacío o inválido
@@ -65,6 +65,10 @@ const carController = {
         model,
         plate,
         year,
+        latlong: {
+          type: 'Point',
+          coordinates: [parseFloat(lng), parseFloat(lat)]
+        },
         user_id,
         image: imagePath
       });
@@ -72,11 +76,9 @@ const carController = {
       res.status(201).json(car);
     } catch (err) {
       console.error('Error al crear auto:', err);
-
       if (err.name === 'SequelizeUniqueConstraintError') {
         return res.status(400).json({ message: 'La placa ya está registrada' });
       }
-
       res.status(500).json({ message: 'Error al crear auto' });
     }
   },
@@ -85,7 +87,7 @@ const carController = {
   updateCar: async (req, res) => {
     try {
       const { id } = req.params;
-      const { brand, model, plate, year } = req.body;
+      const { brand, model, plate, year, lat, lng } = req.body;
       let { user_id } = req.body;
 
       const car = await Car.findByPk(id);
@@ -108,18 +110,19 @@ const carController = {
         model,
         plate,
         year,
+        latlong: (lat && lng)
+          ? { type: 'Point', coordinates: [parseFloat(lng), parseFloat(lat)] }
+          : car.latlong,
         user_id,
         image: imagePath
       });
 
-      res.json({ message: 'Auto actualizado' });
+      res.json({ message: 'Auto actualizado', car });
     } catch (err) {
       console.error('Error al actualizar auto:', err);
-
       if (err.name === 'SequelizeUniqueConstraintError') {
         return res.status(400).json({ message: 'La placa ya está registrada' });
       }
-
       res.status(500).json({ message: 'Error al actualizar auto' });
     }
   },
@@ -179,7 +182,6 @@ const carController = {
 
     try {
       const car = await Car.findByPk(id);
-
       if (!car) {
         return res.status(404).json({ message: 'Auto no encontrado' });
       }

@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// ✅ RUTAS EN ORDEN CORRECTO
+//  RUTAS EN ORDEN CORRECTO
 router.get('/available', carController.getAvailableCars); // <-- esta primero
 
 router.get('/user/:userId', carController.getCarByUserId);

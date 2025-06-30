@@ -1,17 +1,26 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Route = sequelize.define('Route', {
-    longitude: DataTypes.DOUBLE,
-    latitude: DataTypes.DOUBLE,
-    car_id: DataTypes.INTEGER,  
-    user_id: DataTypes.INTEGER,
+    latlong: {
+      type: DataTypes.GEOGRAPHY('POINT', 4326),
+      allowNull: false
+    },
+    car_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    }
   }, {
-    paranoid: true,
     tableName: 'Routes',
+    timestamps: true,
+    paranoid: true
   });
 
   Route.associate = function(models) {
-    Route.belongsTo(models.Car, { foreignKey: 'car_id', as: 'car' });  // <- MAYÚSCULA
+    Route.belongsTo(models.Car, { foreignKey: 'car_id', as: 'car' });
     Route.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
   };
 

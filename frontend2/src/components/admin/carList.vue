@@ -18,6 +18,8 @@
           <th>Modelo</th>
           <th>Placa</th>
           <th>Año</th>
+          <th>Latitud</th>
+          <th>Longitud</th>
           <th>Imagen</th>
           <th>Propietario</th>
           <th>Acciones</th>
@@ -30,6 +32,8 @@
           <td>{{ car.model }}</td>
           <td>{{ car.plate }}</td>
           <td>{{ car.year }}</td>
+          <td>{{ car.lat }}</td>
+          <td>{{ car.lng }}</td>
           <td>
             <img v-if="car.image" :src="`http://localhost:3000${car.image}`" alt="Auto" width="80" style="border-radius: 6px;" />
             <span v-else>Sin imagen</span>
@@ -69,6 +73,8 @@ export default {
           model: car.model || 'N/A',
           plate: car.plate || 'N/A',
           year: car.year   || 'N/A',
+          lat: car. lat    || 'N/A',
+          lng: car.lng     || 'N/A',
           image: car.image || null,
           ownerName: car.user ? car.user.name : 'Sin propietario',
         }));
