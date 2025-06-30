@@ -73,8 +73,8 @@ export default {
           model: car.model || 'N/A',
           plate: car.plate || 'N/A',
           year: car.year   || 'N/A',
-          lat: car. lat    || 'N/A',
-          lng: car.lng     || 'N/A',
+          lat: car?.latlong?.coordinates[1]    || 'N/A',
+          lng: car?.latlong?.coordinates[0]     || 'N/A',
           image: car.image || null,
           ownerName: car.user ? car.user.name : 'Sin propietario',
         }));

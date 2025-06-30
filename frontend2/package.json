@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@fawmi/vue-google-maps": "^0.9.79",
+    "@heroicons/vue": "^2.2.0",
     "@vue-leaflet/vue-leaflet": "^0.10.1",
     "axios": "^1.10.0",
     "leaflet": "^1.9.4",
