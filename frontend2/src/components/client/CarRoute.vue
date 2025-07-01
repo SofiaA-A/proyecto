@@ -58,7 +58,8 @@ export default {
     LTileLayer,
     LMarker,
     LPopup,
-    LPolyline
+    LPolyline,
+
   },
   data() {
     return {

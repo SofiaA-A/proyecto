@@ -17,6 +17,7 @@ import CarList from '../components/admin/carList.vue'
 import CarForm from '../components/admin/carForm.vue'
 import RouteList from '../components/admin/routeList.vue'
 import adminDashboard from '../components/admin/adminDashboard.vue'
+import UpdateRoute from '@/components/admin/UpdateRoute.vue'
 
 const routes = [
   { path: '/', redirect: '/login' },
@@ -31,11 +32,12 @@ const routes = [
       { path: 'dashboard', component: adminDashboard },
       { path: 'users', component: UserList },
       { path: 'users/new', component: () => import('../components/admin/userForm.vue') },
-      {path: '/admin/routes/car/:carId',name: 'CarRouteAdmin',component: () => import('../components/admin/CarRouteAdmin.vue'),props: true},
+      { path: '/admin/routes/car/:carId',name: 'CarRouteAdmin',component: () => import('../components/admin/CarRouteAdmin.vue'),props: true},
       { path: 'cars', component: CarList },
       { path: 'cars/new', component: CarForm },
       { path: 'cars/edit/:id', component: CarForm, props: true },
-      { path: 'routes', component: RouteList }
+      { path: 'routes', component: RouteList },
+      { path: 'route/new', component: UpdateRoute }
     ]
   },
 

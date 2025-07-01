@@ -14,10 +14,10 @@
       <label>Año:</label>
       <input v-model="car.year" type="text" required />
 
-       <label>latitud:</label>
+       <label>Latitud:</label>
       <input v-model="car.lat" type="text" required />
 
-       <label>longitud:</label>
+       <label>Longitud:</label>
       <input v-model="car.lng" type="text" required />
 
 

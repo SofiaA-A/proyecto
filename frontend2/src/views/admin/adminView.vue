@@ -16,6 +16,7 @@
             <li><router-link to="/admin/users">Usuarios</router-link></li>
             <li><router-link to="/admin/cars">Carros</router-link></li>
             <li><router-link to="/admin/routes">Rutas</router-link></li>
+            <li><router-link to="/admin/newRoutes">Nueva Ruta</router-link></li>
             <li><a href="/login" @click="logout" class="logout">Salir</a></li>
           </ul>
         </nav>

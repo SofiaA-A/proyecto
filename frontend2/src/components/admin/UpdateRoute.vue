@@ -55,7 +55,7 @@ export default {
     LTileLayer,
     LMarker,
     LPolyline,
-    LPopup
+    LPopup,
   },
   data() {
     return {
@@ -69,7 +69,7 @@ export default {
     try {
       const response = await fetch(`http://localhost:3000/api/route/car/${carId}`);
       const data = await response.json();
-
+      this.$router.push('/admin/newRoute');
       const coords = [];
 
       // 1. Punto inicial desde car.latlong
