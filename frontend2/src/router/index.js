@@ -17,7 +17,7 @@ import CarList from '../components/admin/carList.vue'
 import CarForm from '../components/admin/carForm.vue'
 import RouteList from '../components/admin/routeList.vue'
 import adminDashboard from '../components/admin/adminDashboard.vue'
-import UpdateRoute from '@/components/admin/UpdateRoute.vue'
+import createRoute from '../components/admin/createRoute.vue'
 
 const routes = [
   { path: '/', redirect: '/login' },
@@ -37,8 +37,8 @@ const routes = [
       { path: 'cars/new', component: CarForm },
       { path: 'cars/edit/:id', component: CarForm, props: true },
       { path: 'routes', component: RouteList },
-      { path: 'route/new', component: UpdateRoute }
-    ]
+      { path: 'routes/new/:carId',name: 'CreateRoute',component: createRoute,props: true}
+      ]
   },
 
   // Rutas del cliente
@@ -50,7 +50,7 @@ const routes = [
       { path: 'dashboard', component: dashboard },
       { path: 'car-info', component: CarInfo },
       { path: 'available-cars', component: AviableCars },
-      { path: 'car-route', component: CarRoute }
+      { path: 'car-route', component: CarRoute },
     ]
   }
 ]

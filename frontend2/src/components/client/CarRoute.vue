@@ -22,7 +22,7 @@
       </LMarker>
 
       <!-- Línea de la ruta -->
-      <LPolyline :lat-lngs="[carPosition, ...routePoints]" :color="'blue'" />
+      <LPolyline :lat-lngs="[carPosition, ...routePoints]" :color="'purple'" />
     </LMap>
   </div>
 </template>

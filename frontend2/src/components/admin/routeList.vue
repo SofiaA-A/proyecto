@@ -12,13 +12,14 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="car in cars" :key="car.id" @click="goToRoute(car.id)" style="cursor: pointer;">
+        <tr v-for="car in cars" :key="car.id">
           <td>{{ car.user?.name || 'No asignado' }}</td>
           <td>{{ car.brand }}</td>
           <td>{{ car.model }}</td>
           <td>{{ car.plate }}</td>
           <td>
-            <button class="btn edit" @click.stop="goToRoute(car.id)">Ver Ruta</button>
+            <button class="btn edit" @click.stop="goToCarRoute(car.id)">Ver Ruta</button>
+            <button class="btn create" @click.stop="goToCreateRoute(car.id)">+ Agregar Ruta</button>
           </td>
         </tr>
       </tbody>
@@ -30,7 +31,7 @@
 import axios from "axios";
 
 export default {
-  name: "ListCar",
+  name: "RouteList",
   data() {
     return {
       cars: []
@@ -48,8 +49,13 @@ export default {
         console.error("Error cargando autos", error);
       }
     },
-    goToRoute(carId) {
+    goToCarRoute(carId) {
+      // Navega a la vista donde se muestran las rutas de este carro (mapa o lista)
       this.$router.push(`/admin/routes/car/${carId}`);
+    },
+    goToCreateRoute(carId) {
+      // Navega al formulario para agregar un nuevo punto a la ruta de este carro
+      this.$router.push(`/admin/routes/new/${carId}`);
     }
   }
 };
@@ -75,7 +81,8 @@ table {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-th, td {
+th,
+td {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid #e2e8f0;
   text-align: left;
@@ -110,5 +117,13 @@ tr:hover {
 
 .edit:hover {
   background-color: #2563eb;
+}
+
+.create {
+  background-color: #26b609;
+}
+
+.create:hover {
+  background-color: #1a8605;
 }
 </style>

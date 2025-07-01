@@ -1,24 +1,15 @@
 <template>
-  <div class="p-4 border rounded shadow mt-4 max-w-md mx-auto">
-    <h3 class="text-lg font-semibold mb-4">Registrar nueva ruta</h3>
+  <div class="form-container">
+    <h2>Agregar Punto a Ruta</h2>
+    <form @submit.prevent="submitForm">
+      <label>Latitud:</label>
+      <input v-model="route.lat" type="text" required />
 
-    <form @submit.prevent="createRoute">
-      <div class="mb-2">
-        <label class="block">Latitud:</label>
-        <input v-model="latitude" type="number" step="any" required class="border p-2 w-full" />
-      </div>
+      <label>Longitud:</label>
+      <input v-model="route.lng" type="text" required />
 
-      <div class="mb-2">
-        <label class="block">Longitud:</label>
-        <input v-model="longitude" type="number" step="any" required class="border p-2 w-full" />
-      </div>
-
-      <button type="submit" class="bg-blue-600 text-white px-4 py-2 mt-2 rounded">
-        Crear Ruta
-      </button>
+      <button type="submit">Guardar</button>
     </form>
-
-    <p v-if="message" class="mt-3 text-green-600">{{ message }}</p>
   </div>
 </template>
 
@@ -26,20 +17,70 @@
 import axios from 'axios';
 
 export default {
-  name: 'CreateRoute',
+  props: ['carId'],
   data() {
     return {
-      latitude: '',
-      longitude: '',
-      user_id: null,
-      car_id: null,
-      message: ''
+      route: {
+        lat: '',
+        lng: '',
+        car_id: null
+      }
     };
   },
-  async mounted() {
-    // Recuperar usuario logueado
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (user) {
-      this.user_id = user.id;
+  created() {
+    this.route.car_id = this.carId;
+  },
+  methods: {
+    async submitForm() {
+      try {
+        await axios.post('http://localhost:3000/api/route/', this.route);
+        alert('Ruta guardada exitosamente');
+        this.$router.push('/admin/routes');
+      } catch (error) {
+        console.error('Error al guardar la ruta:', error);
+        alert('Ocurrió un error al guardar la ruta');
+      }
+    }
+  }
+};
+</script>
 
-      // Obtener el carro del usua
+<style scoped>
+.form-container {
+  max-width: 500px;
+  margin: auto;
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+label {
+  display: block;
+  margin-top: 1rem;
+  font-weight: bold;
+}
+
+input {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.3rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+button {
+  margin-top: 1.5rem;
+  padding: 0.6rem 1rem;
+  background-color: #10b981;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #059669;
+}
+</style>
