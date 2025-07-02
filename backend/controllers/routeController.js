@@ -35,23 +35,33 @@ const routeController = {
   },
 
   // Crear nueva ruta
-  async create(req, res) {
-    try {
-      const { lat, lng, car_id, user_id } = req.body;
-      if (!lat || !lng || !car_id) {
-        return res.status(400).json({ error: 'Faltan datos obligatorios: lat, lng, car_id' });
-      }
-      const route = await Route.create({
-        car_id,
-        user_id: user_id || null,
-        latlong: { type: 'Point', coordinates: [lng, lat] }
-      });
-      res.status(201).json(route);
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Error al crear la ruta' });
+  // Crear nueva ruta
+async create(req, res) {
+  try {
+    const { lat, lng, car_id } = req.body;
+
+    if (!lat || !lng || !car_id) {
+      return res.status(400).json({ error: 'Faltan datos obligatorios: lat, lng, car_id' });
     }
-  },
+
+    // Buscar el carro primero
+    const car = await Car.findByPk(car_id);
+    if (!car) return res.status(404).json({ error: 'Auto no encontrado' });
+
+    // Crear la ruta con user_id tomado del carro
+    const route = await Route.create({
+      car_id: car.id,
+      user_id: car.user_id, 
+      latlong: { type: 'Point', coordinates: [lng, lat] }
+    });
+
+    res.status(201).json(route);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error al crear la ruta' });
+  }
+},
+
 
   // Actualizar ruta existente
   async update(req, res) {

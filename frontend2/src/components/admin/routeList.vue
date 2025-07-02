@@ -18,9 +18,9 @@
           <td>{{ car.model }}</td>
           <td>{{ car.plate }}</td>
           <td>
-            <button class="btn edit" @click.stop="goToCarRoute(car.id)">Ver Ruta</button>
-            <button class="btn create" @click.stop="goToCreateRoute(car.id)">+ Agregar Ruta</button>
-            <button class="btn delete" @click="deleteRoute(routes.id)">Eliminar</button>
+            <button class="btn edit" @click.stop="goToCarRoute(car.id)"> Ver Ruta</button>
+            <button class="btn create" @click.stop="goToCreateRoute(car.id)"> Agregar Ruta</button>
+            <button class="btn delete" @click.stop="deleteRoute(car.id)"> Eliminar Ruta</button>
           </td>
         </tr>
       </tbody>
@@ -51,12 +51,23 @@ export default {
       }
     },
     goToCarRoute(carId) {
-      // Navega a la vista donde se muestran las rutas de este carro (mapa o lista)
       this.$router.push(`/admin/routes/car/${carId}`);
     },
     goToCreateRoute(carId) {
-      // Navega al formulario para agregar un nuevo punto a la ruta de este carro
       this.$router.push(`/admin/routes/new/${carId}`);
+    },
+    async deleteRoute(carId) {
+      const confirmDelete = confirm('¿Estás seguro de que deseas eliminar todas las rutas de este auto?');
+      if (!confirmDelete) return;
+
+      try {
+        await axios.delete(`http://localhost:3000/api/routes/car/${carId}`);
+        alert('Rutas eliminadas correctamente.');
+        this.loadCars(); // refresca la tabla
+      } catch (error) {
+        console.error('Error al eliminar rutas:', error);
+        alert('Hubo un error al eliminar las rutas.');
+      }
     }
   }
 };
@@ -127,7 +138,12 @@ tr:hover {
 .create:hover {
   background-color: #1a8605;
 }
-.delete{
+
+.delete {
   background-color: #d63030;
+}
+
+.delete:hover {
+  background-color: #b91c1c;
 }
 </style>
