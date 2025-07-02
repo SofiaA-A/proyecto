@@ -1,6 +1,6 @@
 <template>
   <div class="user-form">
-    <h2>Registrar Nuevo Usuario</h2>
+    <h2>{{ isEdit ? 'Editar Usuario' : 'Registrar Nuevo Usuario' }}</h2>
     <form @submit.prevent="submitForm">
       <div class="form-group">
         <label>Nombre:</label>
@@ -14,7 +14,12 @@
 
       <div class="form-group">
         <label>Contraseña:</label>
-        <input type="password" v-model="user.password" required />
+        <input
+          type="password"
+          v-model="user.password"
+          :required="!isEdit"
+          placeholder="Agrega nueva contraseña "
+        />
       </div>
 
       <div class="form-group">
@@ -26,39 +31,60 @@
         </select>
       </div>
 
-      <button type="submit">Registrar</button>
+      <button type="submit">{{ isEdit ? 'Actualizar' : 'Registrar' }}</button>
     </form>
   </div>
 </template>
 
-<script>
-import axios from 'axios';
+<script setup>
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import axios from 'axios'
 
-export default {
-  name: 'UserForm',
-  data() {
-    return {
-      user: {
-        name: '',
-        email: '',
-        password: '',
-        role: ''
-      }
-    };
-  },
-  methods: {
-    async submitForm() {
-      try {
-        const response = await axios.post('http://localhost:3000/api/users/register', this.user);
-        alert('Usuario creado exitosamente');
-        this.$router.push('/admin/users'); // Redirige a la lista si lo deseas
-      } catch (error) {
-        console.error('Error al registrar el usuario:', error);
-        alert('Hubo un error al registrar el usuario');
-      }
+const route = useRoute()
+const router = useRouter()
+
+const isEdit = ref(false)
+
+const user = ref({
+  name: '',
+  email: '',
+  password: '',
+  role: ''
+})
+
+onMounted(async () => {
+  const id = route.params.id
+  if (id) {
+    isEdit.value = true
+    try {
+      const res = await axios.get(`http://localhost:3000/api/users/${id}`)
+      user.value.name = res.data.name
+      user.value.email = res.data.email
+      user.value.role = res.data.role
+      // No llenamos password
+    } catch (error) {
+      console.error('Error al obtener datos del usuario:', error)
     }
   }
-};
+})
+
+const submitForm = async () => {
+  try {
+    const id = route.params.id
+    if (isEdit.value) {
+      await axios.put(`http://localhost:3000/api/users/${id}`, user.value)
+      alert('Usuario actualizado correctamente')
+    } else {
+      await axios.post('http://localhost:3000/api/users/register', user.value)
+      alert('Usuario registrado correctamente')
+    }
+    router.push('/admin/users')
+  } catch (error) {
+    console.error('Error al guardar el usuario:', error)
+    alert('Hubo un error al guardar el usuario')
+  }
+}
 </script>
 
 <style scoped>

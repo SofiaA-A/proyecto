@@ -1,7 +1,8 @@
 <template>
   <div class="user-list">
     <h2>Lista de Usuarios</h2>
-    <!-- Botón para agregar nuevo auto -->
+
+    <!-- Botón para agregar nuevo usuario -->
     <div class="mb-4">
       <button class="btn new" @click="$router.push('/admin/users/new')">+ Nuevo Usuario</button>
     </div>
@@ -13,6 +14,7 @@
           <th>Nombre</th>
           <th>Correo</th>
           <th>Rol</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -21,6 +23,10 @@
           <td>{{ user.name }}</td>
           <td>{{ user.email }}</td>
           <td>{{ user.role }}</td>
+          <td>
+            <button class="btn edit" @click="editUser(user.id)">Editar</button>
+            <button class="btn delete" @click="deleteUser(user.id)">Eliminar</button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -31,9 +37,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
 
 const users = ref([])
+const router = useRouter()
 
 const fetchUsers = async () => {
   try {
@@ -41,6 +49,22 @@ const fetchUsers = async () => {
     users.value = res.data
   } catch (error) {
     console.error('Error al obtener usuarios:', error)
+  }
+}
+
+const editUser = (id) => {
+  router.push(`/admin/users/edit/${id}`)
+}
+
+const deleteUser = async (id) => {
+  if (confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
+    try {
+      await axios.delete(`http://localhost:3000/api/users/${id}`)
+      fetchUsers()
+    } catch (error) {
+      console.error('Error al eliminar usuario:', error)
+      alert('Hubo un error al eliminar el usuario')
+    }
   }
 }
 
@@ -83,6 +107,7 @@ th {
 tr:hover {
   background-color: #f9fafb;
 }
+
 .new {
   background-color: #10b981;
   font-weight: 600;
@@ -94,8 +119,29 @@ tr:hover {
   color: white;
   transition: background-color 0.2s ease;
 }
-
 .new:hover {
   background-color: #059669;
+}
+.btn {
+  padding: 0.4rem 0.8rem;
+  margin-right: 0.3rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+  color: white;
+}
+.edit {
+  background-color: #3b82f6;
+}
+.edit:hover {
+  background-color: #2563eb;
+}
+.delete {
+  background-color: #ef4444;
+}
+.delete:hover {
+  background-color: #dc2626;
 }
 </style>

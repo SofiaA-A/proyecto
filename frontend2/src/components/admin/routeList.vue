@@ -20,6 +20,7 @@
           <td>
             <button class="btn edit" @click.stop="goToCarRoute(car.id)">Ver Ruta</button>
             <button class="btn create" @click.stop="goToCreateRoute(car.id)">+ Agregar Ruta</button>
+            <button class="btn delete" @click="deleteRoute(routes.id)">Eliminar</button>
           </td>
         </tr>
       </tbody>
@@ -125,5 +126,8 @@ tr:hover {
 
 .create:hover {
   background-color: #1a8605;
+}
+.delete{
+  background-color: #d63030;
 }
 </style>
