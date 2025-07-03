@@ -2,7 +2,9 @@
   <div>
     <h2>Ruta del Vehículo</h2>
 
-    <!-- Mapa -->
+    <!-- Botón para agregar nueva ruta -->
+    <button class="add-btn" @click="goToAddRoute">+ Agregar Nueva Ruta</button>
+
     <LMap
       v-if="routeCoords.length"
       style="height: 500px; width: 100%"
@@ -11,50 +13,50 @@
     >
       <LTileLayer :url="tileUrl" :attribution="attribution" />
 
-      <LMarker v-for="(coord, index) in routeCoords" :key="index" :lat-lng="coord">
+      <LMarker
+        v-for="(coord, index) in routeCoords"
+        :key="index"
+        :lat-lng="coord"
+      >
         <LPopup>Punto {{ index + 1 }}</LPopup>
       </LMarker>
 
-      <LPolyline :lat-lngs="routeCoords" :color="'purple'" />
+      <LPolyline :lat-lngs="routeCoords" color="purple" />
     </LMap>
 
     <div v-else>
       <p>No hay coordenadas suficientes para mostrar una ruta.</p>
     </div>
 
-    <!-- Información del vehículo y coordenadas -->
-    <div v-if="car && routes && routes.length" class="info-container">
+    <div v-if="car && routes.length" class="info-container">
       <h3>Información del Vehículo</h3>
-      <p><strong>ID del Usuario:</strong> {{ car.id_user }}</p>
-      <p><strong>Marca:</strong> {{ car.bran }}</p>
+      <p><strong>Usuario:</strong> {{ car.user?.name || 'Sin propietario' }}</p>
+      <p><strong>Marca:</strong> {{ car.brand }}</p>
       <p><strong>Modelo:</strong> {{ car.model }}</p>
 
       <h4>Coordenadas registradas en la ruta:</h4>
       <table>
         <thead>
           <tr>
-            <th>Ruta</th>
+            <th>#</th>
             <th>Latitud</th>
             <th>Longitud</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="route in routes" :key="route.id">
-            
-
+          <tr v-for="(route, index) in routes" :key="route.id">
+            <td>{{ index + 1 }}</td>
+            <td>{{ route.lat }}</td>
+            <td>{{ route.lng }}</td>
+            <td>
+              <button @click="deleteRoute(route.id)" class="delete-btn">
+                Eliminar
+              </button>
+            </td>
           </tr>
         </tbody>
       </table>
-      <ul class="coord-list">
-        <li v-for="(r, index) in routes" :key="r.id">
-          <span class="point-icon">📍</span>
-          <span class="coord-text">
-            Ruta {{ index + 1 }} →
-            Latitud: <strong>{{ r.latlong.coordinates[1] }}</strong>,
-            Longitud: <strong>{{ r.latlong.coordinates[0] }}</strong>
-          </span>
-        </li>
-      </ul>
     </div>
   </div>
 </template>
@@ -69,8 +71,8 @@ import {
 } from "@vue-leaflet/vue-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import axios from "axios";
 
-// Iconos de Leaflet
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
@@ -83,59 +85,77 @@ L.Icon.Default.mergeOptions({
 });
 
 export default {
-  name: "AdminRouteMap",
-  components: {
-    LMap,
-    LTileLayer,
-    LMarker,
-    LPolyline,
-    LPopup
-  },
+  name: "CarRouteAdmin",
+  components: { LMap, LTileLayer, LMarker, LPolyline, LPopup },
   data() {
     return {
+      car: null,
+      routes: [],
       routeCoords: [],
       tileUrl: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       attribution: '&copy; OpenStreetMap contributors',
-      user: null,
-      car: null,
-      routes: []
     };
   },
   async created() {
-    const carId = this.$route.params.carId;
-    try {
-      const response = await fetch(`http://localhost:3000/api/route/car/${carId}`);
-      const data = await response.json();
-      console.log('datos de la ruta:', data);
+    this.loadRoutes();
+  },
+  methods: {
+    async loadRoutes() {
+      const carId = this.$route.params.carId;
+      try {
+        const response = await axios.get(`http://localhost:3000/api/route/car/${carId}`);
+        const data = response.data;
 
-      this.routes = data.routes || [];
-      this.user = data.user || null;
-      this.car = data.car || null;
+        this.car = data.car || null;
+        this.routes = (data.routes || []).map(route => {
+          if (route.latlong?.coordinates) {
+            return {
+              ...route,
+              lng: route.latlong.coordinates[0],
+              lat: route.latlong.coordinates[1]
+            };
+          }
+          return route;
+        });
 
-      const coords = [];
-
-      if (this.car && this.car.latlong && this.car.latlong.coordinates) {
-        const [lng, lat] = this.car.latlong.coordinates;
-        coords.push([lat, lng]);
-      }
-
-      this.routes.forEach(r => {
-        if (r.latlong && r.latlong.coordinates) {
-          const [lng, lat] = r.latlong.coordinates;
+        const coords = [];
+        if (this.car?.latlong?.coordinates) {
+          const [lng, lat] = this.car.latlong.coordinates;
           coords.push([lat, lng]);
         }
-      });
+        this.routes.forEach(r => {
+          if (r.lat !== undefined && r.lng !== undefined) {
+            coords.push([r.lat, r.lng]);
+          }
+        });
 
-      this.routeCoords = coords;
-    } catch (error) {
-      console.error("Error al cargar ruta:", error);
+        this.routeCoords = coords;
+      } catch (error) {
+        console.error("Error cargando rutas:", error);
+        alert("Error al cargar rutas");
+      }
+    },
+    async deleteRoute(routeId) {
+      if (!confirm("¿Estás seguro que deseas eliminar esta ruta?")) return;
+
+      try {
+        await axios.delete(`http://localhost:3000/api/route/${routeId}`);
+        alert("Ruta eliminada correctamente");
+        this.loadRoutes();
+      } catch (error) {
+        console.error("Error eliminando ruta:", error);
+        alert("No se pudo eliminar la ruta");
+      }
+    },
+    goToAddRoute() {
+      // Navega al formulario de agregar ruta
+      this.$router.push(`/admin/routes/new/${this.car.id}`);
     }
   }
 };
 </script>
 
 <style scoped>
-/* Estilo general del contenedor */
 .info-container {
   margin-top: 2rem;
   padding: 1rem;
@@ -144,40 +164,48 @@ export default {
   border-radius: 8px;
 }
 
-/* Títulos */
-.info-container h3,
-.info-container h4 {
-  color: #333;
-  margin-bottom: 0.5rem;
+.add-btn {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 1rem;
 }
 
-/* Lista de coordenadas */
-.coord-list {
-  list-style: none;
-  padding-left: 0;
+.add-btn:hover {
+  background-color: #218838;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
   margin-top: 1rem;
 }
 
-.coord-list li {
-  display: flex;
-  align-items: center;
-  background: #fff;
-  margin-bottom: 8px;
-  padding: 10px 14px;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
 }
 
-/* Icono de ubicación */
-.point-icon {
-  font-size: 18px;
-  margin-right: 8px;
+th {
+  background-color: #f2f2f2;
 }
 
-/* Texto de la coordenada */
-.coord-text {
-  font-family: monospace;
-  font-size: 14px;
+.delete-btn {
+  background-color: #dc3545;
+  color: white;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background-color: #c82333;
 }
 </style>
