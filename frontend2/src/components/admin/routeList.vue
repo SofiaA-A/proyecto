@@ -19,8 +19,6 @@
           <td>{{ car.plate }}</td>
           <td>
             <button class="btn edit" @click.stop="goToCarRoute(car.id)"> Ver Ruta</button>
-            <button class="btn create" @click.stop="goToCreateRoute(car.id)"> Agregar Ruta</button>
-            <button class="btn delete" @click.stop="deleteRoute(car.id)"> Eliminar Ruta</button>
           </td>
         </tr>
       </tbody>

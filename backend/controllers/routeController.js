@@ -109,9 +109,21 @@ async create(req, res) {
     if (!car) return res.status(404).json({ error: 'Carro no encontrado' });
 
     const routes = await Route.findAll({
-      where: { car_id: carId },
-      order: [['createdAt', 'ASC']]
-    });
+  where: { car_id: carId },
+  include: [
+    {
+      model: Car,
+      as: 'car'
+    },
+    {
+      model: User,
+      as: 'user',
+      attributes: ['name'] // Solo trae lo necesario
+    }
+  ],
+  order: [['createdAt', 'ASC']]
+});
+
 
     res.json({ car, routes });
   } catch (err) {

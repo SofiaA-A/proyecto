@@ -2,33 +2,43 @@
   <div>
     <h2>Ruta del Vehículo</h2>
 
-    <!-- Botón para agregar nueva ruta -->
-    <button class="add-btn" @click="goToAddRoute">+ Agregar Nueva Ruta</button>
-
+    <!-- Mapa -->
     <LMap
       v-if="routeCoords.length"
+      ref="map"
       style="height: 500px; width: 100%"
-      :zoom="11"
+      :zoom="13"
       :center="routeCoords[0]"
     >
       <LTileLayer :url="tileUrl" :attribution="attribution" />
 
+      <!-- Marcadores para cada punto -->
       <LMarker
         v-for="(coord, index) in routeCoords"
         :key="index"
         :lat-lng="coord"
       >
-        <LPopup>Punto {{ index + 1 }}</LPopup>
+        <LPopup>
+          Punto {{ index + 1 }}<br />
+          Latitud: {{ coord[0] }}<br />
+          Longitud: {{ coord[1] }}
+        </LPopup>
       </LMarker>
 
+      <!-- Línea azul que une todos los puntos -->
       <LPolyline :lat-lngs="routeCoords" color="purple" />
     </LMap>
+
 
     <div v-else>
       <p>No hay coordenadas suficientes para mostrar una ruta.</p>
     </div>
 
+        <button class="add-btn" @click="goToAddRoute">+ Agregar Nueva Ruta</button>
+    <!-- Información del vehículo -->
     <div v-if="car && routes.length" class="info-container">
+    <!-- Botón para agregar nueva ruta -->
+
       <h3>Información del Vehículo</h3>
       <p><strong>Usuario:</strong> {{ car.user?.name || 'Sin propietario' }}</p>
       <p><strong>Marca:</strong> {{ car.brand }}</p>
@@ -38,7 +48,7 @@
       <table>
         <thead>
           <tr>
-            <th>#</th>
+            <th>ID</th>
             <th>Latitud</th>
             <th>Longitud</th>
             <th>Acciones</th>
@@ -73,6 +83,7 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import axios from "axios";
 
+// Corrección de iconos de Leaflet en Vue 3
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
@@ -93,11 +104,11 @@ export default {
       routes: [],
       routeCoords: [],
       tileUrl: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-      attribution: '&copy; OpenStreetMap contributors',
+      attribution: '&copy; OpenStreetMap contributors'
     };
   },
-  async created() {
-    this.loadRoutes();
+  async mounted() {
+    await this.loadRoutes();
   },
   methods: {
     async loadRoutes() {
@@ -108,7 +119,7 @@ export default {
 
         this.car = data.car || null;
         this.routes = (data.routes || []).map(route => {
-          if (route.latlong?.coordinates) {
+          if (route.latlong && Array.isArray(route.latlong.coordinates)) {
             return {
               ...route,
               lng: route.latlong.coordinates[0],
@@ -141,14 +152,13 @@ export default {
       try {
         await axios.delete(`http://localhost:3000/api/route/${routeId}`);
         alert("Ruta eliminada correctamente");
-        this.loadRoutes();
+        await this.loadRoutes();
       } catch (error) {
         console.error("Error eliminando ruta:", error);
         alert("No se pudo eliminar la ruta");
       }
     },
     goToAddRoute() {
-      // Navega al formulario de agregar ruta
       this.$router.push(`/admin/routes/new/${this.car.id}`);
     }
   }
