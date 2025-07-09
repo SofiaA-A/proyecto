@@ -51,9 +51,9 @@ export default {
     goToCarRoute(carId) {
       this.$router.push(`/admin/routes/car/${carId}`);
     },
-    goToCreateRoute(carId) {
-      this.$router.push(`/admin/routes/new/${carId}`);
-    },
+    // goToCreateRoute(carId) {
+    //   this.$router.push(`/admin/routes/new/${carId}`);
+    // },
     async deleteRoute(carId) {
       const confirmDelete = confirm('¿Estás seguro de que deseas eliminar todas las rutas de este auto?');
       if (!confirmDelete) return;

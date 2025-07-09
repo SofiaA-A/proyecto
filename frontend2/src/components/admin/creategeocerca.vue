@@ -1,6 +1,6 @@
 <template>
   <div class="user-form">
-    <h2>{{ isEdit ? 'Editar Geocerca' : 'Agrega una Geocerca' }}</h2>
+    <h2>{{ isEdit ? 'Editar Geocerca' : 'Agregar una Geocerca' }}</h2>
     <form @submit.prevent="submitForm">
       <div class="form-group">
         <label>Latitud:</label>
@@ -36,25 +36,32 @@ const geocerca = ref({
   lat: '',
   lng: '',
   radius: '',
-  car_id: '',
-  user_id: ''
+  car_id: '',  // 🚨 Lo asignamos en onMounted
+  user_id: ''  // 🚨 Lo asignamos en onMounted
 })
 
-onMounted(async () => {
-  const id = route.params.id
+onMounted(() => {
+  const id = route.params.id // Si existe ID, estamos en modo editar
+  const carId = route.params.car_id // 🚨 Tomar car_id de la URL
+  const currentUserId = 3 // 🚨 Aquí coloca el ID del usuario logueado
+
+  geocerca.value.car_id = carId
+  geocerca.value.user_id = currentUserId
+
   if (id) {
     isEdit.value = true
-    try {
-      const res = await axios.get(`http://localhost:3000/api/geocercas/${id}`)
-      const center = res.data.center.coordinates
-      geocerca.value.lat = center[1] // latitud
-      geocerca.value.lng = center[0] // longitud
-      geocerca.value.radius = res.data.radius
-      geocerca.value.car_id = res.data.car_id
-      geocerca.value.user_id = res.data.user_id
-    } catch (error) {
-      console.error('Error al obtener la geocerca:', error)
-    }
+    axios.get(`http://localhost:3000/api/geocercas/${id}`)
+      .then(res => {
+        const center = res.data.center.coordinates
+        geocerca.value.lat = center[1] // latitud
+        geocerca.value.lng = center[0] // longitud
+        geocerca.value.radius = res.data.radius
+        geocerca.value.car_id = res.data.car_id
+        geocerca.value.user_id = res.data.user_id
+      })
+      .catch(error => {
+        console.error('Error al obtener la geocerca:', error)
+      })
   }
 })
 
@@ -76,14 +83,13 @@ const submitForm = async () => {
       await axios.post('http://localhost:3000/api/geocercas', payload)
       alert('Geocerca registrada correctamente')
     }
-    router.push('/admin/routes/')
+    router.push('/admin/routes/') // 🚨 Cambia la ruta según tu app
   } catch (error) {
     console.error('Error al guardar la geocerca:', error)
     alert('Hubo un error al guardar la geocerca')
   }
 }
 </script>
-
 
 <style scoped>
 .user-form {
