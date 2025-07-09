@@ -35,7 +35,7 @@
     </div>
            <!-- Botón para agregar nueva ruta -->
         <button class="add-btn" @click="goToAddRoute">+ Agregar Nueva Ruta</button>
-        <button class="add-btn" @click="goToAddGeocerca">+ Agregar GeoCerca</button>
+        <button class="add-btn" @click="goToAddGeocerca">+ Crear una Geocerca</button>
             <!-- Información del vehículo -->
     <div v-if="car && routes.length" class="info-container">
 

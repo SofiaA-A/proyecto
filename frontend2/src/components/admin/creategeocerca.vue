@@ -13,11 +13,9 @@
       </div>
 
       <div class="form-group">
-        <label>Radio:</label>
+        <label>Radio (metros):</label>
         <input type="text" v-model="geocerca.radius" required />
       </div>
-
-
 
       <button type="submit">{{ isEdit ? 'Actualizar' : 'Registrar' }}</button>
     </form>
@@ -37,7 +35,9 @@ const isEdit = ref(false)
 const geocerca = ref({
   lat: '',
   lng: '',
-  radius: ''
+  radius: '',
+  car_id: '',
+  user_id: ''
 })
 
 onMounted(async () => {
@@ -46,11 +46,14 @@ onMounted(async () => {
     isEdit.value = true
     try {
       const res = await axios.get(`http://localhost:3000/api/geocercas/${id}`)
-      geocerca.value.lat = res.data.lat
-      geocerca.value.lng = res.data.lng
+      const center = res.data.center.coordinates
+      geocerca.value.lat = center[1] // latitud
+      geocerca.value.lng = center[0] // longitud
       geocerca.value.radius = res.data.radius
+      geocerca.value.car_id = res.data.car_id
+      geocerca.value.user_id = res.data.user_id
     } catch (error) {
-      console.error('Error al obtener la geocerca del usuario:', error)
+      console.error('Error al obtener la geocerca:', error)
     }
   }
 })
@@ -58,11 +61,19 @@ onMounted(async () => {
 const submitForm = async () => {
   try {
     const id = route.params.id
+    const payload = {
+      lat: parseFloat(geocerca.value.lat),
+      lng: parseFloat(geocerca.value.lng),
+      radius: parseInt(geocerca.value.radius),
+      car_id: parseInt(geocerca.value.car_id),
+      user_id: parseInt(geocerca.value.user_id)
+    }
+
     if (isEdit.value) {
-      await axios.put(`http://localhost:3000/api/geocercas/${id}`, geocerca.value)
+      await axios.put(`http://localhost:3000/api/geocercas/${id}`, payload)
       alert('Geocerca actualizada correctamente')
     } else {
-      await axios.post('http://localhost:3000/api/geocercas', geocerca.value)
+      await axios.post('http://localhost:3000/api/geocercas', payload)
       alert('Geocerca registrada correctamente')
     }
     router.push('/admin/routes/')
@@ -72,6 +83,7 @@ const submitForm = async () => {
   }
 }
 </script>
+
 
 <style scoped>
 .user-form {
