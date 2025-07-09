@@ -1,13 +1,12 @@
 'use strict';
-
 module.exports = {
-  async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('geocercas', {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable('Geocercas', {
       id: {
-        type: Sequelize.INTEGER,
-        primaryKey: true,
+        allowNull: false,
         autoIncrement: true,
-        allowNull: false
+        primaryKey: true,
+        type: Sequelize.INTEGER
       },
       center: {
         type: Sequelize.GEOGRAPHY('POINT', 4326),
@@ -15,24 +14,12 @@ module.exports = {
       },
       radius: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-        comment: 'Radio en metros'
-      },
-      status: {
-        type: Sequelize.STRING(10),
-        defaultValue: 'outside',
-        allowNull: false,
-        comment: "Estado: 'inside' o 'outside'"
+        allowNull: false
       },
       car_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: {
-          model: 'Cars',
-          key: 'id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
+        unique: true
       },
       user_id: {
         type: Sequelize.INTEGER,
@@ -44,29 +31,23 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
       },
-      created_at: {
+      createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.fn('NOW')
+        defaultValue: Sequelize.literal('NOW()')
       },
-      updated_at: {
+      updatedAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.fn('NOW')
+        defaultValue: Sequelize.literal('NOW()')
       },
-      deleted_at: {
+      deletedAt: {
         allowNull: true,
         type: Sequelize.DATE
       }
     });
-
-    // Índice espacial en center
-    await queryInterface.sequelize.query(`
-      CREATE INDEX idx_geocercas_center ON geocercas USING GIST(center);
-    `);
   },
-
-  async down(queryInterface, Sequelize) {
+  down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('geocercas');
   }
 };

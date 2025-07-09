@@ -34,7 +34,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: true
     }
-  }, {
+  }, 
+  {
     tableName: 'Cars',
     timestamps: true,
     paranoid: true

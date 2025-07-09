@@ -1,4 +1,4 @@
-const { Sequelize, DataTypes } = require('sequelize');
+const { Sequelize, DataTypes } = require ('sequelize');
 const sequelize = new Sequelize(
   process.env.DB_NAME,
   process.env.DB_USER,
@@ -13,16 +13,17 @@ const sequelize = new Sequelize(
 const db = {};
 
 db.Sequelize = Sequelize;
-db.sequelize = sequelize;
 
 //modelos
 db.User = require('./user')(sequelize, DataTypes);
 db.Car = require('./car')(sequelize, DataTypes);
 db.Route = require('./route')(sequelize, DataTypes);
+db.Geocerca = require('./geocerca')(sequelize, DataTypes);
 
 //asiciaciones
 if (db.User.associate) db.User.associate(db);
 if (db.Car.associate) db.Car.associate(db);
 if (db.Route.associate) db.Route.associate(db);
+if (db.Geocerca.associate) db.Geocerca.associate(db);
 
 module.exports = db;

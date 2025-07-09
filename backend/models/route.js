@@ -11,9 +11,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     user_id: {
       type: DataTypes.INTEGER,
-      allowNull: false  // Cambiado de true a false para que sea obligatorio
+      allowNull: false
     }
-  }, {
+  },
+   {
     tableName: 'Routes',
     timestamps: true,
     paranoid: true

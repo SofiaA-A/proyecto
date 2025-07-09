@@ -33,11 +33,11 @@
     <div v-else>
       <p>No hay coordenadas suficientes para mostrar una ruta.</p>
     </div>
-
+           <!-- Botón para agregar nueva ruta -->
         <button class="add-btn" @click="goToAddRoute">+ Agregar Nueva Ruta</button>
-    <!-- Información del vehículo -->
+        <button class="add-btn" @click="goToAddGeocerca">+ Agregar GeoCerca</button>
+            <!-- Información del vehículo -->
     <div v-if="car && routes.length" class="info-container">
-    <!-- Botón para agregar nueva ruta -->
 
       <h3>Información del Vehículo</h3>
       <p><strong>Usuario:</strong> {{ car.user?.name || 'Sin propietario' }}</p>
@@ -160,6 +160,9 @@ export default {
     },
     goToAddRoute() {
       this.$router.push(`/admin/routes/new/${this.car.id}`);
+    },
+    goToAddGeocerca() {
+      this.$router.push(`/admin/geocerca/new/${this.car.id}`);
     }
   }
 };
