@@ -2,10 +2,17 @@ const express = require('express');
 const router = express.Router();
 const geocercaController = require('../controllers/geocercaController');
 
-router.post('/geocercas', geocercaController.create);       // Crear
-router.get('/geocercas', geocercaController.getAll);        // Listar todas
-router.get('/geocercas/:id', geocercaController.getById);   // Obtener por ID
-router.put('/geocercas/:id', geocercaController.update);    // Actualizar
-router.delete('/geocercas/:id', geocercaController.delete); // Eliminar
+//crear
+router.post('/', geocercaController.create);   
+//mostrar    
+router.get('/', geocercaController.getAll);  
+
+router.get('/car/:car_id', geocercaController.getByCarId);
+//mostras por id
+router.get('/:id', geocercaController.getById);   
+//editar
+router.put('/:id', geocercaController.update);    
+//eliminar
+router.delete('/:id', geocercaController.delete); 
 
 module.exports = router;

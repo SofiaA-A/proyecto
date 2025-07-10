@@ -1,3 +1,4 @@
+const { noTrueLogging } = require('sequelize/lib/utils/deprecations');
 const { Geocerca, Car, User } = require('../models');
 
 const geocercaController = {
@@ -16,7 +17,7 @@ const geocercaController = {
 
       // Crear la geocerca
       const nuevaGeocerca = await Geocerca.create({
-        center: { type: 'Point', coordinates: [lng, lat] },
+        center: { type: 'Point', coordinates: [lat, lng] },
         radius,
         car_id,
         user_id
@@ -45,6 +46,22 @@ const geocercaController = {
     }
   },
 
+  async getByCarId(req, res) {
+    try {
+      const carId = req.params.car_id;
+
+      const geocerca = await Geocerca.findOne({ where: { car_id: carId } });
+
+      if (!geocerca) {
+        return res.status(404).json({ message: "No se encontró geocerca para este carro" });
+      }
+
+      res.json(geocerca);
+    } catch (error) {
+      console.error("Error al obtener geocerca por car_id:", error);
+      res.status(500).json({ error: "Error al obtener geocerca" });
+    }
+  },
   // Obtener una geocerca por ID
   async getById(req, res) {
     try {
@@ -72,7 +89,7 @@ const geocercaController = {
       const geocerca = await Geocerca.findByPk(id);
       if (!geocerca) return res.status(404).json({ message: 'Geocerca no encontrada' });
 
-      geocerca.center = { type: 'Point', coordinates: [lng, lat] };
+      geocerca.center = { type: 'Point', coordinates: [lat, lng] };
       geocerca.radius = radius;
       await geocerca.save();
 

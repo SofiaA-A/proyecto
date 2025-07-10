@@ -36,18 +36,17 @@ const geocerca = ref({
   lat: '',
   lng: '',
   radius: '',
-  car_id: '',  // 🚨 Lo asignamos en onMounted
-  user_id: ''  // 🚨 Lo asignamos en onMounted
+  car_id: '', // lo definimos en onMounted
+  user_id: '' // podemos asumir un ID fijo o traerlo del login
 })
 
 onMounted(() => {
-  const id = route.params.id // Si existe ID, estamos en modo editar
-  const carId = route.params.car_id // 🚨 Tomar car_id de la URL
-  const currentUserId = 3 // 🚨 Aquí coloca el ID del usuario logueado
+  // Obtenemos car_id desde la URL
+  const carId = route.params.car_id
+  geocerca.value.car_id = parseInt(carId)
+  geocerca.value.user_id = 3 // 👈 Ajusta según tu sistema de auth
 
-  geocerca.value.car_id = carId
-  geocerca.value.user_id = currentUserId
-
+  const id = route.params.id
   if (id) {
     isEdit.value = true
     axios.get(`http://localhost:3000/api/geocercas/${id}`)
@@ -56,8 +55,6 @@ onMounted(() => {
         geocerca.value.lat = center[1] // latitud
         geocerca.value.lng = center[0] // longitud
         geocerca.value.radius = res.data.radius
-        geocerca.value.car_id = res.data.car_id
-        geocerca.value.user_id = res.data.user_id
       })
       .catch(error => {
         console.error('Error al obtener la geocerca:', error)
@@ -66,14 +63,29 @@ onMounted(() => {
 })
 
 const submitForm = async () => {
+  if (
+    !geocerca.value.lat ||
+    !geocerca.value.lng ||
+    !geocerca.value.radius
+  ) {
+    alert('Por favor, llena todos los campos')
+    return
+  }
+
   try {
     const id = route.params.id
+
     const payload = {
-      lat: parseFloat(geocerca.value.lat),
-      lng: parseFloat(geocerca.value.lng),
+      center: {
+        type: 'Point',
+        coordinates: [
+          parseFloat(geocerca.value.lng),
+          parseFloat(geocerca.value.lat)
+        ]
+      },
       radius: parseInt(geocerca.value.radius),
-      car_id: parseInt(geocerca.value.car_id),
-      user_id: parseInt(geocerca.value.user_id)
+      car_id: geocerca.value.car_id,
+      user_id: geocerca.value.user_id
     }
 
     if (isEdit.value) {
@@ -83,13 +95,16 @@ const submitForm = async () => {
       await axios.post('http://localhost:3000/api/geocercas', payload)
       alert('Geocerca registrada correctamente')
     }
-    router.push('/admin/routes/') // 🚨 Cambia la ruta según tu app
+
+    // 🔥 Redirigir al mapa con el car_id
+    router.push(`/admin/routes/car/${geocerca.value.car_id}`)
   } catch (error) {
     console.error('Error al guardar la geocerca:', error)
     alert('Hubo un error al guardar la geocerca')
   }
 }
 </script>
+
 
 <style scoped>
 .user-form {

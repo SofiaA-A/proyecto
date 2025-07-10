@@ -2,13 +2,12 @@
   <div>
     <h2>Ruta del Vehículo</h2>
 
-    <!-- Mapa -->
     <LMap
       v-if="routeCoords.length"
       ref="map"
       style="height: 500px; width: 100%"
       :zoom="13"
-      :center="routeCoords[0]"
+      :center="mapCenter"
     >
       <LTileLayer :url="tileUrl" :attribution="attribution" />
 
@@ -27,18 +26,26 @@
 
       <!-- Línea azul que une todos los puntos -->
       <LPolyline :lat-lngs="routeCoords" color="purple" />
-    </LMap>
 
+      <!-- Círculo rojo de la geocerca -->
+      <LCircle
+        v-if="geocerca"
+        :lat-lng="[geocerca.center.coordinates[1], geocerca.center.coordinates[0]]"
+        :radius="geocerca.radius"
+        color="purple"
+      />
+    </LMap>
 
     <div v-else>
       <p>No hay coordenadas suficientes para mostrar una ruta.</p>
     </div>
-           <!-- Botón para agregar nueva ruta -->
-        <button class="add-btn" @click="goToAddRoute">+ Agregar Nueva Ruta</button>
-        <button class="add-btn" @click="goToAddGeocerca">+ Crear una Geocerca</button>
-            <!-- Información del vehículo -->
-    <div v-if="car && routes.length" class="info-container">
 
+    <!-- Botones -->
+    <button class="add-btn" @click="goToAddRoute">+ Agregar Nueva Ruta</button>
+    <button class="add-btn" @click="goToAddGeocerca">+ Crear una Geocerca</button>
+
+    <!-- Información del vehículo -->
+    <div v-if="car && routes.length" class="info-container">
       <h3>Información del Vehículo</h3>
       <p><strong>Usuario:</strong> {{ car.user?.name || 'Sin propietario' }}</p>
       <p><strong>Marca:</strong> {{ car.brand }}</p>
@@ -77,13 +84,14 @@ import {
   LTileLayer,
   LMarker,
   LPolyline,
-  LPopup
+  LPopup,
+  LCircle
 } from "@vue-leaflet/vue-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import axios from "axios";
 
-// Corrección de iconos de Leaflet en Vue 3
+// Iconos Leaflet para Vue 3
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
@@ -97,18 +105,21 @@ L.Icon.Default.mergeOptions({
 
 export default {
   name: "CarRouteAdmin",
-  components: { LMap, LTileLayer, LMarker, LPolyline, LPopup },
+  components: { LMap, LTileLayer, LMarker, LPolyline, LPopup, LCircle },
   data() {
     return {
       car: null,
       routes: [],
       routeCoords: [],
+      geocerca: null,
+      mapCenter: [20.6597, -103.3496], // valor por defecto (Guadalajara)
       tileUrl: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       attribution: '&copy; OpenStreetMap contributors'
     };
   },
   async mounted() {
     await this.loadRoutes();
+    await this.loadGeocerca();
   },
   methods: {
     async loadRoutes() {
@@ -141,9 +152,33 @@ export default {
         });
 
         this.routeCoords = coords;
+
+        // Centrar el mapa en la primera coordenada si existe
+        if (coords.length > 0) {
+          this.mapCenter = coords[0];
+        }
       } catch (error) {
         console.error("Error cargando rutas:", error);
         alert("Error al cargar rutas");
+      }
+    },
+    async loadGeocerca() {
+      try {
+        const carId = this.$route.params.carId;
+        const response = await axios.get(`http://localhost:3000/api/geocercas/car/${carId}`);
+        this.geocerca = response.data;
+
+        // Centrar el mapa en la geocerca si existe
+        if (this.geocerca && this.geocerca.center?.coordinates) {
+          this.mapCenter = [
+            this.geocerca.center.coordinates[1],
+            this.geocerca.center.coordinates[0]
+          ];
+        }
+
+        console.log("Geocerca cargada:", this.geocerca);
+      } catch (error) {
+        console.error("Error cargando geocerca:", error);
       }
     },
     async deleteRoute(routeId) {
