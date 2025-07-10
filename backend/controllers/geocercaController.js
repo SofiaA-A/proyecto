@@ -5,7 +5,7 @@ const geocercaController = {
   // Crear geocerca
   async create(req, res) {
     try {
-      const { lat, lng, radius, car_id, user_id } = req.body;
+      const { lng, lat, radius, car_id, user_id } = req.body;
 
       // Validar si el carro existe
       const car = await Car.findByPk(car_id);
@@ -17,7 +17,7 @@ const geocercaController = {
 
       // Crear la geocerca
       const nuevaGeocerca = await Geocerca.create({
-        center: { type: 'Point', coordinates: [lat, lng] },
+        center: { type: 'Point', coordinates: [lng, lat] },
         radius,
         car_id,
         user_id
@@ -84,12 +84,12 @@ const geocercaController = {
   async update(req, res) {
     try {
       const { id } = req.params;
-      const { lat, lng, radius } = req.body;
+      const { lng, lat, radius } = req.body;
 
       const geocerca = await Geocerca.findByPk(id);
       if (!geocerca) return res.status(404).json({ message: 'Geocerca no encontrada' });
 
-      geocerca.center = { type: 'Point', coordinates: [lat, lng] };
+      geocerca.center = { type: 'Point', coordinates: [lng, lat] };
       geocerca.radius = radius;
       await geocerca.save();
 

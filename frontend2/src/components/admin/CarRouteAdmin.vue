@@ -15,7 +15,7 @@
       <LMarker
         v-for="(coord, index) in routeCoords"
         :key="index"
-        :lat-lng="coord"
+        :lat-lng="coord" 
       >
         <LPopup>
           Punto {{ index + 1 }}<br />
@@ -24,13 +24,13 @@
         </LPopup>
       </LMarker>
 
-      <!-- Línea azul que une todos los puntos -->
-      <LPolyline :lat-lngs="routeCoords" color="purple" />
+      <!-- Línea que une todos los puntos -->
+      <LPolyline :lat-lng="routeCoords" color="purple" /> <!-- ✅ corregido -->
 
-      <!-- Círculo rojo de la geocerca -->
+      <!-- Círculo de la geocerca -->
       <LCircle
-        v-if="geocerca"
-        :lat-lng="[geocerca.center.coordinates[1], geocerca.center.coordinates[0]]"
+        v-if="geocercaLngLat"
+        :lat-lng="geocercaLngLat"
         :radius="geocerca.radius"
         color="purple"
       />
@@ -55,7 +55,7 @@
       <table>
         <thead>
           <tr>
-            <th>ID</th>
+            <th>#</th>
             <th>Latitud</th>
             <th>Longitud</th>
             <th>Acciones</th>
@@ -112,7 +112,8 @@ export default {
       routes: [],
       routeCoords: [],
       geocerca: null,
-      mapCenter: [20.6597, -103.3496], // valor por defecto (Guadalajara)
+      geocercaLngLat: null, // ✅ Añadido para la geocerca
+      mapCenter: [20.6597, -103.3496], // Valor por defecto (Guadalajara)
       tileUrl: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       attribution: '&copy; OpenStreetMap contributors'
     };
@@ -143,11 +144,11 @@ export default {
         const coords = [];
         if (this.car?.latlong?.coordinates) {
           const [lng, lat] = this.car.latlong.coordinates;
-          coords.push([lat, lng]);
+          coords.push([lat, lng]); // ✅ corregido
         }
         this.routes.forEach(r => {
-          if (r.lat !== undefined && r.lng !== undefined) {
-            coords.push([r.lat, r.lng]);
+          if (r.lng !== undefined && r.lat !== undefined) {
+            coords.push([r.lat, r.lng]); // ✅ corregido
           }
         });
 
@@ -168,12 +169,11 @@ export default {
         const response = await axios.get(`http://localhost:3000/api/geocercas/car/${carId}`);
         this.geocerca = response.data;
 
-        // Centrar el mapa en la geocerca si existe
+        // Centrar el mapa y preparar lat-lng para el círculo
         if (this.geocerca && this.geocerca.center?.coordinates) {
-          this.mapCenter = [
-            this.geocerca.center.coordinates[1],
-            this.geocerca.center.coordinates[0]
-          ];
+          const [lng, lat] = this.geocerca.center.coordinates;
+          this.mapCenter = [lat, lng]; // ✅ corregido
+          this.geocercaLngLat = [lat, lng]; // ✅ corregido
         }
 
         console.log("Geocerca cargada:", this.geocerca);
