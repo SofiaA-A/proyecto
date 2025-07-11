@@ -33,8 +33,8 @@ const router = useRouter()
 const isEdit = ref(false)
 
 const geocerca = ref({
-  lat: '',
   lng: '',
+  lat: '',
   radius: '',
   car_id: '', // lo definimos en onMounted
   user_id: '' // podemos asumir un ID fijo o traerlo del login
@@ -44,7 +44,7 @@ onMounted(() => {
   // Obtenemos car_id desde la URL
   const carId = route.params.car_id
   geocerca.value.car_id = parseInt(carId)
-  geocerca.value.user_id = 3 // 👈 Ajusta según tu sistema de auth
+  geocerca.value.user_id = 1000000000000000// 👈 Ajusta según tu sistema de auth
 
   const id = route.params.id
   if (id) {
@@ -52,8 +52,8 @@ onMounted(() => {
     axios.get(`http://localhost:3000/api/geocercas/${id}`)
       .then(res => {
         const center = res.data.center.coordinates
-        geocerca.value.lat = center[1] // latitud
-        geocerca.value.lng = center[0] // longitud
+        geocerca.value.lng = center[1] // latitud
+        geocerca.value.lat = center[0] // longitud
         geocerca.value.radius = res.data.radius
       })
       .catch(error => {
@@ -64,8 +64,8 @@ onMounted(() => {
 
 const submitForm = async () => {
   if (
-    !geocerca.value.lat ||
     !geocerca.value.lng ||
+    !geocerca.value.lat ||
     !geocerca.value.radius
   ) {
     alert('Por favor, llena todos los campos')

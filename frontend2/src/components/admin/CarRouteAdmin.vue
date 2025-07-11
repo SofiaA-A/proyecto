@@ -15,7 +15,7 @@
       <LMarker
         v-for="(coord, index) in routeCoords"
         :key="index"
-        :lat-lng="coord" 
+        :lat-lng="coord"
       >
         <LPopup>
           Punto {{ index + 1 }}<br />
@@ -25,7 +25,11 @@
       </LMarker>
 
       <!-- Línea que une todos los puntos -->
-      <LPolyline :lat-lng="routeCoords" color="purple" /> <!-- ✅ corregido -->
+      <LPolyline
+      v-if="routeCoords.length"
+      :lat-lngs="routeCoords"
+      color="purple"
+      />
 
       <!-- Círculo de la geocerca -->
       <LCircle
