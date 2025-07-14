@@ -46,9 +46,9 @@ onMounted(() => {
 
   // Obtenemos car_id desde la URL
   const carId = route?.params?.carId
-
+  const userId = route?.params?.userId
   geocerca.value.car_id = parseInt(carId)
-  geocerca.value.user_id = 3
+  geocerca.value.user_id = parseInt(userId)
 
   const id = route.params.id
   if (id) {
@@ -103,7 +103,7 @@ const submitForm = async () => {
     }
 
     // Redirigir al mapa con el car_id
-    router.push(`/admin/routes/car/${geocerca.value.car_id}`)
+    router.push(`/admin/routes/car/${geocerca.value.car_id}/${geocerca.value.user_id}`)
   } catch (error) {
     console.error('Error al guardar la geocerca:', error)
     alert('Hubo un error al guardar la geocerca')

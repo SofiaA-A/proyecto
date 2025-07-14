@@ -208,6 +208,7 @@ export default {
 goToAddGeocerca() {
   if (this.car?.user_id) {
     this.$router.push(`/admin/geocerca/new/${this.car.id}/${this.car.user_id}`);
+
   } else {
     alert("Este vehículo no tiene un usuario asignado");
   }
