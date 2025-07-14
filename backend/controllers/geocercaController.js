@@ -7,6 +7,9 @@ const geocercaController = {
     try {
       const { lng, lat, radius, car_id, user_id } = req.body;
 
+      ///
+      
+
       // Validar si el carro existe
       const car = await Car.findByPk(car_id);
       if (!car) return res.status(404).json({ message: 'Car not found' });

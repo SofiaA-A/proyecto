@@ -1,15 +1,15 @@
 <template>
   <div class="user-form">
-    <h2>{{ isEdit ? 'Editar Geocerca' : 'Agregar una Geocerca' }}</h2>
+    <h2>{{ isEdit ? 'Editar Geocerca' : 'Agregar Geocerca' }}</h2>
     <form @submit.prevent="submitForm">
-      <div class="form-group">
-        <label>Latitud:</label>
-        <input type="text" v-model="geocerca.lat" required />
-      </div>
-
       <div class="form-group">
         <label>Longitud:</label>
         <input type="text" v-model="geocerca.lng" required />
+      </div>
+
+      <div class="form-group">
+        <label>Latitud:</label>
+        <input type="text" v-model="geocerca.lat" required />
       </div>
 
       <div class="form-group">
@@ -36,15 +36,19 @@ const geocerca = ref({
   lng: '',
   lat: '',
   radius: '',
-  car_id: '', // lo definimos en onMounted
-  user_id: '' // podemos asumir un ID fijo o traerlo del login
+  car_id: '',
+  user_id: ''
 })
 
 onMounted(() => {
+
+
+
   // Obtenemos car_id desde la URL
-  const carId = route.params.car_id
+  const carId = route?.params?.carId
+
   geocerca.value.car_id = parseInt(carId)
-  geocerca.value.user_id = 1000000000000000// 👈 Ajusta según tu sistema de auth
+  geocerca.value.user_id = 3
 
   const id = route.params.id
   if (id) {
@@ -52,8 +56,8 @@ onMounted(() => {
     axios.get(`http://localhost:3000/api/geocercas/${id}`)
       .then(res => {
         const center = res.data.center.coordinates
-        geocerca.value.lng = center[1] // latitud
-        geocerca.value.lat = center[0] // longitud
+        geocerca.value.lng = center[1]
+        geocerca.value.lat = center[0]
         geocerca.value.radius = res.data.radius
       })
       .catch(error => {
@@ -76,13 +80,15 @@ const submitForm = async () => {
     const id = route.params.id
 
     const payload = {
-      center: {
+      /*center: {
         type: 'Point',
         coordinates: [
           parseFloat(geocerca.value.lng),
           parseFloat(geocerca.value.lat)
         ]
-      },
+      },*/
+      lng: geocerca.value.lng,
+      lat: geocerca.value.lat,
       radius: parseInt(geocerca.value.radius),
       car_id: geocerca.value.car_id,
       user_id: geocerca.value.user_id
@@ -96,7 +102,7 @@ const submitForm = async () => {
       alert('Geocerca registrada correctamente')
     }
 
-    // 🔥 Redirigir al mapa con el car_id
+    // Redirigir al mapa con el car_id
     router.push(`/admin/routes/car/${geocerca.value.car_id}`)
   } catch (error) {
     console.error('Error al guardar la geocerca:', error)

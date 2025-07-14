@@ -6,7 +6,7 @@
       v-if="routeCoords.length"
       ref="map"
       style="height: 500px; width: 100%"
-      :zoom="13"
+      :zoom="9"
       :center="mapCenter"
     >
       <LTileLayer :url="tileUrl" :attribution="attribution" />
@@ -51,7 +51,7 @@
     <!-- Información del vehículo -->
     <div v-if="car && routes.length" class="info-container">
       <h3>Información del Vehículo</h3>
-      <p><strong>Usuario:</strong> {{ car.user?.name || 'Sin propietario' }}</p>
+      <p><strong>Usuario:</strong> {{ routes.length && routes[0].user ? routes[0].user.name : 'Sin propietario' }}</p>
       <p><strong>Marca:</strong> {{ car.brand }}</p>
       <p><strong>Modelo:</strong> {{ car.model }}</p>
 
@@ -59,7 +59,7 @@
       <table>
         <thead>
           <tr>
-            <th>#</th>
+            <th>ID</th>
             <th>Latitud</th>
             <th>Longitud</th>
             <th>Acciones</th>
@@ -116,7 +116,7 @@ export default {
       routes: [],
       routeCoords: [],
       geocerca: null,
-      geocercaLngLat: null, // ✅ Añadido para la geocerca
+      geocercaLngLat: null, //  Añadido para la geocerca
       mapCenter: [20.6597, -103.3496], // Valor por defecto (Guadalajara)
       tileUrl: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       attribution: '&copy; OpenStreetMap contributors'
@@ -148,11 +148,11 @@ export default {
         const coords = [];
         if (this.car?.latlong?.coordinates) {
           const [lng, lat] = this.car.latlong.coordinates;
-          coords.push([lat, lng]); // ✅ corregido
+          coords.push([lat, lng]);
         }
         this.routes.forEach(r => {
           if (r.lng !== undefined && r.lat !== undefined) {
-            coords.push([r.lat, r.lng]); // ✅ corregido
+            coords.push([r.lat, r.lng]);
           }
         });
 
@@ -176,8 +176,8 @@ export default {
         // Centrar el mapa y preparar lat-lng para el círculo
         if (this.geocerca && this.geocerca.center?.coordinates) {
           const [lng, lat] = this.geocerca.center.coordinates;
-          this.mapCenter = [lat, lng]; // ✅ corregido
-          this.geocercaLngLat = [lat, lng]; // ✅ corregido
+          this.mapCenter = [lat, lng];
+          this.geocercaLngLat = [lat, lng];
         }
 
         console.log("Geocerca cargada:", this.geocerca);
@@ -198,11 +198,22 @@ export default {
       }
     },
     goToAddRoute() {
-      this.$router.push(`/admin/routes/new/${this.car.id}`);
-    },
-    goToAddGeocerca() {
-      this.$router.push(`/admin/geocerca/new/${this.car.id}`);
-    }
+  if (this.car?.user_id) {
+    this.$router.push(`/admin/routes/new/${this.car.id}/${this.car.user_id}`);
+  } else {
+    alert("Este vehículo no tiene un usuario asignado");
+  }
+},
+
+goToAddGeocerca() {
+  if (this.car?.user_id) {
+    this.$router.push(`/admin/geocerca/new/${this.car.id}/${this.car.user_id}`);
+  } else {
+    alert("Este vehículo no tiene un usuario asignado");
+  }
+},
+
+
   }
 };
 </script>

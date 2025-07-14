@@ -8,7 +8,7 @@ const { Sequelize } = require('sequelize');
 const multer = require('multer');
 const load = multer({dest:'uploads'})
 const carRoutes = require('./routes/car');
-const geocercaRoutes = require('.routes/geocerca');
+const geocercaRoutes = require('./routes/geocerca');
 
 
 // 3 Instancia de Express
@@ -61,7 +61,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/route', require('./routes/route'));
 app.use('/api/car', require('./routes/car'));
 app.use('/api/users', require('./routes/user'));
-app.use('/api/geocercas', geocercaRoutes);
+app.use('/api/geocercas', geocercaRoutes );
 app.use('/api/cars', carRoutes);
 
   

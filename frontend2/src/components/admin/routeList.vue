@@ -18,7 +18,7 @@
           <td>{{ car.model }}</td>
           <td>{{ car.plate }}</td>
           <td>
-            <button class="btn edit" @click.stop="goToCarRoute(car.id)"> Ver Ruta</button>
+            <button class="btn edit" @click.stop="goToCarRoute(car.id, car.user?.id)"> Ver Ruta</button>
           </td>
         </tr>
       </tbody>
@@ -48,12 +48,13 @@ export default {
         console.error("Error cargando autos", error);
       }
     },
-    goToCarRoute(carId) {
-      this.$router.push(`/admin/routes/car/${carId}`);
-    },
-    // goToCreateRoute(carId) {
-    //   this.$router.push(`/admin/routes/new/${carId}`);
-    // },
+    goToCarRoute(carId, userId) {
+  if (!userId) {
+    alert("Este vehículo no tiene un usuario asignado");
+    return;
+  }
+  this.$router.push(`/admin/routes/car/${carId}/${userId}`);
+},
     async deleteRoute(carId) {
       const confirmDelete = confirm('¿Estás seguro de que deseas eliminar todas las rutas de este auto?');
       if (!confirmDelete) return;

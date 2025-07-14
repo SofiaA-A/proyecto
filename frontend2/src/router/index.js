@@ -35,13 +35,13 @@ const routes = [
       { path: 'users', component: UserList },
       { path: 'users/new', component: () => import('../components/admin/userForm.vue') },
       { path: '/admin/users/edit/:id', name: 'edit-user',component: userForm },
-      { path: '/admin/routes/car/:carId',name: 'CarRouteAdmin',component: () => import('../components/admin/CarRouteAdmin.vue'),props: true},
+      { path: '/admin/routes/car/:carId/:userId',name: 'CarRouteAdmin',component: () => import('../components/admin/CarRouteAdmin.vue'),props: true},
       { path: 'cars', component: CarList },
       { path: 'cars/new', component: CarForm },
       { path: 'cars/edit/:id', component: CarForm, props: true },
       { path: 'routes', component: RouteList },
-      { path: 'routes/new/:carId',name: 'CreateRoute',component: createRoute,props: true},
-      { path: 'geocerca/new/:carId',name: 'Creategeocerca',component: creategeocerca,props: true}
+      { path: 'routes/new/:carId/:userId',name: 'CreateRoute',component: createRoute,props: true},
+      { path: 'geocerca/new/:carId/:userId',name: 'Creategeocerca',component: creategeocerca,props: true}
       ]
   },
 

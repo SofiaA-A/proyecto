@@ -45,7 +45,14 @@ async create(req, res) {
     }
 
     // Buscar el carro primero
-    const car = await Car.findByPk(car_id);
+    const car = await Car.findByPk(car_id, {
+      include: [
+        {model: User, 
+        as: 'user',
+        attributes:   ['id', 'name']
+        }
+      ]
+    });
     if (!car) return res.status(404).json({ error: 'Auto no encontrado' });
 
     // Crear la ruta con user_id tomado del carro
