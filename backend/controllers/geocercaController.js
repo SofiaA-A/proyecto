@@ -53,7 +53,7 @@ const geocercaController = {
     try {
       const carId = req.params.car_id;
 
-      const geocerca = await Geocerca.findOne({ where: { car_id: carId } });
+      const geocerca = await Geocerca.findAll({ where: { car_id: carId } });
 
       if (!geocerca) {
         return res.status(404).json({ message: "No se encontró geocerca para este carro" });

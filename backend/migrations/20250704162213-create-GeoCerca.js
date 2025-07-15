@@ -19,7 +19,12 @@ module.exports = {
       car_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        unique: true
+        references: {
+          model: 'Cars',
+          key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
       },
       user_id: {
         type: Sequelize.INTEGER,

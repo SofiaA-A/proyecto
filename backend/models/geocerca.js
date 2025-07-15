@@ -11,11 +11,10 @@ module.exports = (sequelize, DataTypes) => {
     car_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      unique: true
     },
     user_id: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
     } },
     {
     tableName: 'Geocercas', 

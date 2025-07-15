@@ -32,12 +32,14 @@
         color="purple"
       />
 
-      <!-- Círculo de la geocerca -->
+      <!-- 🔥 Mostrar todas las geocercas -->
       <LCircle
-        v-if="geocercaLngLat"
-        :lat-lng="geocercaLngLat"
-        :radius="geocerca.radius"
+        v-for="(fence, index) in geocercas"
+        :key="`fence-${index}`"
+        :lat-lng="[fence.center.coordinates[1], fence.center.coordinates[0]]"
+        :radius="fence.radius"
         color="purple"
+        fill-opacity="0.2"
       />
     </LMap>
 
@@ -116,8 +118,7 @@ export default {
       car: null,
       routes: [],
       routeCoords: [],
-      geocerca: null,
-      geocercaLngLat: null, //  Añadido para la geocerca
+      geocercas: [],         // 🔥 Todas las geocercas
       mapCenter: [20.6597, -103.3496], // Valor por defecto (Guadalajara)
       tileUrl: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       attribution: '&copy; OpenStreetMap contributors'
@@ -125,7 +126,7 @@ export default {
   },
   async mounted() {
     await this.loadRoutes();
-    await this.loadGeocerca();
+    await this.loadGeocercas();
   },
   methods: {
     async loadRoutes() {
@@ -168,38 +169,36 @@ export default {
         alert("Error al cargar rutas");
       }
     },
-    async loadGeocerca() {
+    async loadGeocercas() {
       try {
         const carId = this.$route.params.carId;
         const response = await axios.get(`http://localhost:3000/api/geocercas/car/${carId}`);
-        this.geocerca = response.data;
+        const fences = response.data;
 
-        // Centrar el mapa y preparar lat-lng para el círculo
-        if (this.geocerca && this.geocerca.center?.coordinates) {
-          const [lng, lat] = this.geocerca.center.coordinates;
-          this.mapCenter = [lat, lng];
-          this.geocercaLngLat = [lat, lng];
-        }
-
-        console.log("Geocerca cargada:", this.geocerca);
+        this.geocercas = Array.isArray(fences) ? fences : [fences];
+        console.log("Geocercas cargadas:", this.geocercas);
       } catch (error) {
-        console.error("Error cargando geocerca:", error);
+        console.error("Error cargando geocercas:", error);
       }
     },
     getMarkerIcon(coord) {
-      if (!this.geocerca || !this.geocercaLngLat) {
-        return L.icon({
-          iconUrl: markerIcon,
-          iconSize: [25, 41],
-          iconAnchor: [12, 41]
-        });
+      // 🔥 Revisar si el punto está dentro de alguna geocerca
+      let isInsideAnyFence = false;
+
+      for (const fence of this.geocercas) {
+        const center = [
+          fence.center.coordinates[1],
+          fence.center.coordinates[0]
+        ];
+        const distance = this.getDistance(coord, center);
+        if (distance <= fence.radius) {
+          isInsideAnyFence = true;
+          break;
+        }
       }
 
-      const distance = this.getDistance(coord, this.geocercaLngLat);
-      const isInside = distance <= this.geocerca.radius;
-
       return L.icon({
-        iconUrl: isInside
+        iconUrl: isInsideAnyFence
           ? "https://maps.google.com/mapfiles/ms/icons/green-dot.png"
           : "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
         iconSize: [32, 32],
@@ -251,6 +250,7 @@ export default {
   }
 };
 </script>
+
 <style scoped>
 .info-container {
   margin-top: 2rem;

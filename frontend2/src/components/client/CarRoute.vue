@@ -7,11 +7,6 @@
     >
       <LTileLayer :url="tileUrl" :attribution="attribution" />
 
-      <!-- Punto de partida del auto -->
-      <!-- <LMarker :lat-lng="carPosition">
-        <LPopup>Inicio del vehículo</LPopup>
-      </LMarker> -->
-
       <!-- Marcadores de la ruta -->
       <LMarker
         v-for="(point, index) in routePoints"
@@ -25,11 +20,12 @@
       <!-- Línea de la ruta -->
       <LPolyline :lat-lngs="[carPosition, ...routePoints]" :color="'purple'" />
 
-      <!-- Geocerca -->
+      <!-- Geocercas -->
       <LCircle
-        v-if="geoFenceCenter && geoFenceRadius"
-        :lat-lng="geoFenceCenter"
-        :radius="geoFenceRadius"
+        v-for="(fence, index) in geoFences"
+        :key="`geo-fence-${index}`"
+        :lat-lng="[fence.center.coordinates[1], fence.center.coordinates[0]]"
+        :radius="fence.radius"
         color="purple"
         fill-opacity="0.2"
       />
@@ -97,15 +93,14 @@ export default {
   },
   data() {
     return {
-      zoom: 13,
+      zoom: 9,
       tileUrl: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       attribution: '&copy; OpenStreetMap contributors',
       carPosition: [0, 0],      // punto inicial
       routePoints: [],          // puntos de ruta
       routes: [],               // rutas completas para la tabla
       center: [0, 0],           // centro del mapa
-      geoFenceCenter: null,     // centro de la geocerca
-      geoFenceRadius: 0         // radio de la geocerca en metros
+      geoFences: []             // 🔥 todas las geocercas
     }
   },
   async mounted() {
@@ -143,52 +138,60 @@ export default {
         return [lat, lng]
       })
 
-      // 🔵 Obtener la geocerca asociada al carro
+      // 🔵 Obtener TODAS las geocercas asociadas al carro
       const geoRes = await axios.get(`http://localhost:3000/api/geocercas/car/${car.id}`)
-      if (geoRes.data && geoRes.data.center && geoRes.data.radius) {
-        const [geoLng, geoLat] = geoRes.data.center.coordinates
-        this.geoFenceCenter = [geoLat, geoLng]
-        this.geoFenceRadius = geoRes.data.radius // metros
-      }
+      const fences = geoRes.data
+
+      // 🔥 Si la API devuelve un solo objeto, conviértelo en array
+      this.geoFences = Array.isArray(fences) ? fences : [fences]
+
     } catch (err) {
       console.error("Error al cargar datos:", err)
     }
   },
   methods: {
     getMarkerIcon(point) {
-      if (!this.geoFenceCenter || !this.geoFenceRadius) {
-        return L.icon({ iconUrl: markerIcon, iconSize: [25, 41], iconAnchor: [12, 41] });
+      // 🔥 Revisar si el punto está dentro de alguna geocerca
+      let isInsideAnyFence = false
+
+      for (const fence of this.geoFences) {
+        const center = [
+          fence.center.coordinates[1],
+          fence.center.coordinates[0]
+        ]
+        const distance = this.getDistance(point, center)
+        if (distance <= fence.radius) {
+          isInsideAnyFence = true
+          break
+        }
       }
 
-      const distance = this.getDistance(point, this.geoFenceCenter);
-      const isInside = distance <= this.geoFenceRadius;
-
       return L.icon({
-        iconUrl: isInside
+        iconUrl: isInsideAnyFence
           ? "https://maps.google.com/mapfiles/ms/icons/green-dot.png"
           : "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
         iconSize: [32, 32],
         iconAnchor: [16, 32],
-      });
+      })
     },
     getDistance(coord1, coord2) {
-      const R = 6371e3; // Radio de la tierra en metros
-      const lat1 = coord1[0] * Math.PI / 180;
-      const lat2 = coord2[0] * Math.PI / 180;
-      const deltaLat = (coord2[0] - coord1[0]) * Math.PI / 180;
-      const deltaLng = (coord2[1] - coord1[1]) * Math.PI / 180;
+      const R = 6371e3 // Radio de la tierra en metros
+      const lat1 = coord1[0] * Math.PI / 180
+      const lat2 = coord2[0] * Math.PI / 180
+      const deltaLat = (coord2[0] - coord1[0]) * Math.PI / 180
+      const deltaLng = (coord2[1] - coord1[1]) * Math.PI / 180
 
       const a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
         Math.cos(lat1) * Math.cos(lat2) *
-        Math.sin(deltaLng / 2) * Math.sin(deltaLng / 2);
+        Math.sin(deltaLng / 2) * Math.sin(deltaLng / 2)
 
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
 
-      return R * c; // Distancia en metros
+      return R * c // Distancia en metros
     },
     formatDate(dateString) {
-      const options = { year: "numeric", month: "short", day: "numeric" };
-      return new Date(dateString).toLocaleDateString("es-MX", options);
+      const options = { year: "numeric", month: "short", day: "numeric" }
+      return new Date(dateString).toLocaleDateString("es-MX", options)
     }
   }
 }
@@ -216,8 +219,7 @@ table {
   overflow: hidden;
 }
 
-th,
-td {
+th, td {
   border: 1px solid #ddd;
   padding: 8px 12px;
   text-align: center;
