@@ -16,6 +16,7 @@
         v-for="(coord, index) in routeCoords"
         :key="index"
         :lat-lng="coord"
+        :icon="getMarkerIcon(coord)"
       >
         <LPopup>
           Punto {{ index + 1 }}<br />
@@ -26,9 +27,9 @@
 
       <!-- Línea que une todos los puntos -->
       <LPolyline
-      v-if="routeCoords.length"
-      :lat-lngs="routeCoords"
-      color="purple"
+        v-if="routeCoords.length"
+        :lat-lngs="routeCoords"
+        color="purple"
       />
 
       <!-- Círculo de la geocerca -->
@@ -185,6 +186,42 @@ export default {
         console.error("Error cargando geocerca:", error);
       }
     },
+    getMarkerIcon(coord) {
+      if (!this.geocerca || !this.geocercaLngLat) {
+        return L.icon({
+          iconUrl: markerIcon,
+          iconSize: [25, 41],
+          iconAnchor: [12, 41]
+        });
+      }
+
+      const distance = this.getDistance(coord, this.geocercaLngLat);
+      const isInside = distance <= this.geocerca.radius;
+
+      return L.icon({
+        iconUrl: isInside
+          ? "https://maps.google.com/mapfiles/ms/icons/green-dot.png"
+          : "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
+        iconSize: [32, 32],
+        iconAnchor: [16, 32]
+      });
+    },
+    getDistance(coord1, coord2) {
+      const R = 6371e3; // Radio de la Tierra en metros
+      const lat1 = coord1[0] * Math.PI / 180;
+      const lat2 = coord2[0] * Math.PI / 180;
+      const deltaLat = (coord2[0] - coord1[0]) * Math.PI / 180;
+      const deltaLng = (coord2[1] - coord1[1]) * Math.PI / 180;
+
+      const a =
+        Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+        Math.cos(lat1) * Math.cos(lat2) *
+        Math.sin(deltaLng / 2) * Math.sin(deltaLng / 2);
+
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+      return R * c; // Distancia en metros
+    },
     async deleteRoute(routeId) {
       if (!confirm("¿Estás seguro que deseas eliminar esta ruta?")) return;
 
@@ -198,27 +235,22 @@ export default {
       }
     },
     goToAddRoute() {
-  if (this.car?.user_id) {
-    this.$router.push(`/admin/routes/new/${this.car.id}/${this.car.user_id}`);
-  } else {
-    alert("Este vehículo no tiene un usuario asignado");
-  }
-},
-
-goToAddGeocerca() {
-  if (this.car?.user_id) {
-    this.$router.push(`/admin/geocerca/new/${this.car.id}/${this.car.user_id}`);
-
-  } else {
-    alert("Este vehículo no tiene un usuario asignado");
-  }
-},
-
-
+      if (this.car?.user_id) {
+        this.$router.push(`/admin/routes/new/${this.car.id}/${this.car.user_id}`);
+      } else {
+        alert("Este vehículo no tiene un usuario asignado");
+      }
+    },
+    goToAddGeocerca() {
+      if (this.car?.user_id) {
+        this.$router.push(`/admin/geocerca/new/${this.car.id}/${this.car.user_id}`);
+      } else {
+        alert("Este vehículo no tiene un usuario asignado");
+      }
+    }
   }
 };
 </script>
-
 <style scoped>
 .info-container {
   margin-top: 2rem;

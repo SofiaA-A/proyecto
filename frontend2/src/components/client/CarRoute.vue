@@ -30,7 +30,7 @@
         v-if="geoFenceCenter && geoFenceRadius"
         :lat-lng="geoFenceCenter"
         :radius="geoFenceRadius"
-        color="blue"
+        color="purple"
         fill-opacity="0.2"
       />
     </LMap>
