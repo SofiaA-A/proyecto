@@ -39,6 +39,7 @@
 
 <script>
 import axios from 'axios';
+const baseURL = import.meta.env.VITE_API_URL
 
 export default {
   data() {
@@ -69,7 +70,7 @@ export default {
   methods: {
     async loadUsers() {
       try {
-        const res = await axios.get('http://localhost:3000/api/users');
+        const res = await axios.get(`${baseURL}/api/users`);
         this.users = res.data;
       } catch (error) {
         console.error('Error cargando usuarios:', error);
@@ -77,7 +78,7 @@ export default {
     },
     async loadCar(id) {
       try {
-        const res = await axios.get(`http://localhost:3000/api/car/${id}`);
+        const res = await axios.get(`${baseURL}/api/car/${id}`);
         this.car = res.data;
       } catch (error) {
         console.error('Error cargando carro:', error);
@@ -108,9 +109,9 @@ export default {
         };
 
         if (this.isEdit) {
-          await axios.put(`http://localhost:3000/api/car/${this.$route.params.id}`, formData, config);
+          await axios.put(`${baseURL}/api/car/${this.$route.params.id}`, formData, config);
         } else {
-          await axios.post('http://localhost:3000/api/car', formData, config);
+          await axios.post(`${baseURL}/api/car`, formData, config);
         }
 
         alert('Carro guardado exitosamente');

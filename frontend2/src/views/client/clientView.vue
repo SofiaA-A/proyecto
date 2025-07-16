@@ -4,20 +4,23 @@
     <header class="admin-header">
       <h1>Bienvenido </h1>
       <p>Hola, {{ userName }}</p>
+
+      <!-- Botón hamburguesa -->
+      <button class="menu-toggle" @click="toggleSidebar">☰</button>
     </header>
 
     <!-- Contenedor principal -->
     <div class="admin-content">
       <!-- Menú lateral -->
-      <aside class="admin-sidebar">
+      <aside :class="['admin-sidebar', { 'sidebar-open': sidebarOpen }]">
         <nav>
           <ul>
-        <li><router-link to="/client/dashboard"> Inicio</router-link></li>
-        <li><router-link to="/client/car-info"> Datos del Carro</router-link></li>
-        <li><router-link to="/client/available-cars">Autos Disponibles</router-link></li>
-        <li><router-link to="/client/car-route"> Ruta</router-link></li>
-        <li><a href="/login" @click="logout"> Salir</a></li>
-      </ul>
+            <li><router-link to="/client/dashboard" @click="closeSidebar">Inicio</router-link></li>
+            <li><router-link to="/client/car-info" @click="closeSidebar">Datos del Carro</router-link></li>
+            <li><router-link to="/client/available-cars" @click="closeSidebar">Autos Disponibles</router-link></li>
+            <li><router-link to="/client/car-route" @click="closeSidebar">Ruta</router-link></li>
+            <li><a href="/login" @click="logout" class="logout">Salir</a></li>
+          </ul>
         </nav>
       </aside>
 
@@ -32,15 +35,26 @@
 <script>
 export default {
   name: 'AdminView',
+  data() {
+    return {
+      sidebarOpen: false
+    }
+  },
   methods: {
+    toggleSidebar() {
+      this.sidebarOpen = !this.sidebarOpen;
+    },
+    closeSidebar() {
+      this.sidebarOpen = false;
+    },
     logout() {
-      localStorage.clear()
+      localStorage.clear();
     }
   },
   computed: {
     userName() {
-      const user = JSON.parse(localStorage.getItem('user'))
-      return user?.name || 'Admin'
+      const user = JSON.parse(localStorage.getItem('user'));
+      return user?.name || 'Admin';
     }
   }
 }
@@ -59,12 +73,22 @@ export default {
 .admin-header {
   background-color: #1e293b;
   color: white;
-  padding: 0.1rem 10rem;
+  padding: 0.1rem 2rem;
   font-size: 1.2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Botón hamburguesa oculto por defecto */
+.menu-toggle {
+  display: none;
+  font-size: 2rem;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
 }
 
 /* Contenido dividido en sidebar y vista */
@@ -87,7 +111,6 @@ export default {
   padding: 0;
   margin: 0;
 }
-
 
 .admin-sidebar a {
   display: block;
@@ -129,5 +152,36 @@ export default {
   border-bottom-left-radius: 12px;
   box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.03);
 }
-</style>
 
+/* --RESPONSIVE ----------- */
+@media (max-width: 768px) {
+  /* Mostrar botón hamburguesa */
+  .menu-toggle {
+    display: block;
+  }
+
+  /* Sidebar oculto por defecto */
+  .admin-sidebar {
+    position: fixed;
+    left: -250px;
+    top: 0;
+    height: 100%;
+    width: 220px;
+    background-color: #f1f5f9;
+    padding: 2rem 1rem;
+    box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
+    transition: left 0.3s ease;
+    z-index: 1000;
+  }
+
+  /* Sidebar visible cuando se abre */
+  .admin-sidebar.sidebar-open {
+    left: 0;
+  }
+
+  /* La vista principal ocupa todo el ancho */
+  .admin-main {
+    padding: 1rem;
+  }
+}
+</style>

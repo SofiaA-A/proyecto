@@ -15,6 +15,7 @@
 
 <script>
 import axios from 'axios';
+const baseURL = import.meta.env.VITE_API_URL
 
 export default {
   props: ['carId'],
@@ -33,7 +34,7 @@ export default {
   methods: {
     async submitForm() {
       try {
-        await axios.post('http://localhost:3000/api/route/', this.route);
+        await axios.post(`${baseURL}/api/route/`, this.route);
         alert('Ruta guardada exitosamente');
         this.$router.push('/admin/routes');
       } catch (error) {

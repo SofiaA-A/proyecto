@@ -16,6 +16,7 @@
 
 <script>
 import axios from 'axios';
+const baseURL = import.meta.env.VITE_API_URL
 
 export default {
   name: 'CarInfo',
@@ -38,7 +39,7 @@ export default {
       }
 
       try {
-        const response = await axios.get(`http://localhost:3000/api/car/user/${userId}`);
+        const response = await axios.get(`${baseURL}/api/car/user/${userId}`);
         console.log("Auto encontrado:", response.data); // Debug
         this.car = response.data;
       } catch (error) {

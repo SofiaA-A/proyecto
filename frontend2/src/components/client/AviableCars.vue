@@ -23,6 +23,7 @@
 
 <script>
 import axios from 'axios'
+const baseURL = import.meta.env.VITE_API_URL
 
 export default {
   name: 'AviableCars',
@@ -44,7 +45,7 @@ export default {
       const userId = user.id;
 
       // Petición PUT para asignar el auto
-      await axios.put(`http://localhost:3000/api/cars/${carId}/assign`, { userId });
+      await axios.put(`${baseURL}/api/cars/${carId}/assign`, { userId });
 
       alert('Auto asignado correctamente');
       // Refrescar la lista para que el auto desaparezca del catálogo
@@ -58,7 +59,7 @@ export default {
     async fetchAvailableCars() {
       try {
         // Opcional: usar baseURL en axios para evitar URL largas
-        const res = await axios.get('http://localhost:3000/api/cars/available')
+        const res = await axios.get(`${baseURL}/api/cars/available`)
         this.cars = res.data
       } catch (error) {
         console.error('Error al obtener autos disponibles:', error)

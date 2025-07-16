@@ -28,6 +28,7 @@
 
 <script>
 import axios from "axios";
+const baseURL = import.meta.env.VITE_API_URL
 
 export default {
   name: "RouteList",
@@ -42,7 +43,7 @@ export default {
   methods: {
     async loadCars() {
       try {
-        const res = await axios.get("http://localhost:3000/api/cars");
+        const res = await axios.get(`${baseURL}/api/cars`);
         this.cars = res.data;
       } catch (error) {
         console.error("Error cargando autos", error);
@@ -60,7 +61,7 @@ export default {
       if (!confirmDelete) return;
 
       try {
-        await axios.delete(`http://localhost:3000/api/routes/car/${carId}`);
+        await axios.delete(`${baseURL}/api/routes/car/${carId}`);
         alert('Rutas eliminadas correctamente.');
         this.loadCars(); // refresca la tabla
       } catch (error) {

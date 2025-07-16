@@ -26,6 +26,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
+const baseURL = import.meta.env.VITE_API_URL
 
 const route = useRoute()
 const router = useRouter()
@@ -53,7 +54,7 @@ onMounted(() => {
   const id = route.params.id
   if (id) {
     isEdit.value = true
-    axios.get(`http://localhost:3000/api/geocercas/${id}`)
+    axios.get(`${baseURL}/api/geocercas/${id}`)
       .then(res => {
         const center = res.data.center.coordinates
         geocerca.value.lng = center[1]
@@ -95,10 +96,10 @@ const submitForm = async () => {
     }
 
     if (isEdit.value) {
-      await axios.put(`http://localhost:3000/api/geocercas/${id}`, payload)
+      await axios.put(`${baseURL}/api/geocercas/${id}`, payload)
       alert('Geocerca actualizada correctamente')
     } else {
-      await axios.post('http://localhost:3000/api/geocercas', payload)
+      await axios.post(`${baseURL}/api/geocercas`, payload)
       alert('Geocerca registrada correctamente')
     }
 

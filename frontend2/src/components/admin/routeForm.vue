@@ -15,6 +15,7 @@
 
 <script>
 import axios from 'axios';
+const baseURL = import.meta.env.VITE_API_URL
 
 export default {
   data() {
@@ -38,7 +39,7 @@ export default {
   methods: {
     async loadRoute(id) {
       try {
-        const res = await axios.get(`http://localhost:3000/api/routes/${id}`);
+        const res = await axios.get(`${baseURL}/api/routes/${id}`);
         this.route = res.data;
       } catch (error) {
         console.error('Error cargando ruta:', error);
@@ -55,9 +56,9 @@ export default {
         };
 
         if (this.isEdit) {
-          await axios.put(`http://localhost:3000/api/route/${this.$route.params.id}`, formData, config);
+          await axios.put(`${baseURL}/api/route/${this.$route.params.id}`, formData, config);
         } else {
-          await axios.post('http://localhost:3000/api/route', formData, config);
+          await axios.post(`${baseURL}/api/route`, formData, config);
         }
 
         alert('Ruta guardada exitosamente');

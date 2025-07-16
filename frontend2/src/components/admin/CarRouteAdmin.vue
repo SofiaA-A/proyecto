@@ -32,7 +32,7 @@
         color="purple"
       />
 
-      <!-- 🔥 Mostrar todas las geocercas -->
+      <!--  Mostrar todas las geocercas -->
       <LCircle
         v-for="(fence, index) in geocercas"
         :key="`fence-${index}`"
@@ -97,6 +97,7 @@ import {
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import axios from "axios";
+const baseURL = import.meta.env.VITE_API_URL
 
 // Iconos Leaflet para Vue 3
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
@@ -118,7 +119,7 @@ export default {
       car: null,
       routes: [],
       routeCoords: [],
-      geocercas: [],         // 🔥 Todas las geocercas
+      geocercas: [],         // Todas las geocercas
       mapCenter: [20.6597, -103.3496], // Valor por defecto (Guadalajara)
       tileUrl: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       attribution: '&copy; OpenStreetMap contributors'
@@ -132,7 +133,7 @@ export default {
     async loadRoutes() {
       const carId = this.$route.params.carId;
       try {
-        const response = await axios.get(`http://localhost:3000/api/route/car/${carId}`);
+        const response = await axios.get(`${baseURL}/api/route/car/${carId}`);
         const data = response.data;
 
         this.car = data.car || null;
@@ -172,7 +173,7 @@ export default {
     async loadGeocercas() {
       try {
         const carId = this.$route.params.carId;
-        const response = await axios.get(`http://localhost:3000/api/geocercas/car/${carId}`);
+        const response = await axios.get(`${baseURL}/api/geocercas/car/${carId}`);
         const fences = response.data;
 
         this.geocercas = Array.isArray(fences) ? fences : [fences];
@@ -182,7 +183,7 @@ export default {
       }
     },
     getMarkerIcon(coord) {
-      // 🔥 Revisar si el punto está dentro de alguna geocerca
+      //  Revisar si el punto está dentro de alguna geocerca
       let isInsideAnyFence = false;
 
       for (const fence of this.geocercas) {
@@ -225,7 +226,7 @@ export default {
       if (!confirm("¿Estás seguro que deseas eliminar esta ruta?")) return;
 
       try {
-        await axios.delete(`http://localhost:3000/api/route/${routeId}`);
+        await axios.delete(`${baseURL}/api/route/${routeId}`);
         alert("Ruta eliminada correctamente");
         await this.loadRoutes();
       } catch (error) {

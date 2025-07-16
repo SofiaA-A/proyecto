@@ -39,13 +39,14 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
+const baseURL = import.meta.env.VITE_API_URL
 
 const users = ref([])
 const router = useRouter()
 
 const fetchUsers = async () => {
   try {
-    const res = await axios.get('http://localhost:3000/api/users')
+    const res = await axios.get(`${baseURL}/api/users`)
     users.value = res.data
   } catch (error) {
     console.error('Error al obtener usuarios:', error)
@@ -59,7 +60,7 @@ const editUser = (id) => {
 const deleteUser = async (id) => {
   if (confirm('¿Estás seguro de que deseas eliminar este usuario?')) {
     try {
-      await axios.delete(`http://localhost:3000/api/users/${id}`)
+      await axios.delete(`${baseURL}/api/users/${id}`)
       fetchUsers()
     } catch (error) {
       console.error('Error al eliminar usuario:', error)

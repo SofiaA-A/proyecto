@@ -51,6 +51,7 @@
 
 <script>
 import axios from 'axios';
+ const baseURL = import.meta.env.VITE_API_URL
 
 export default {
   name: 'CarList',
@@ -66,7 +67,7 @@ export default {
       this.loading = true;
       this.error = null;
       try {
-        const response = await axios.get('http://localhost:3000/api/car');
+        const response = await axios.get(`${baseURL}/api/car`);
         this.cars = response.data.map(car => ({
           id: car.id,
           brand: car.brand || 'N/A',
@@ -92,7 +93,7 @@ export default {
       if (!confirmDelete) return;
 
       try {
-        await axios.delete(`http://localhost:3000/api/car/${id}`);
+        await axios.delete(`${baseURL}/api/car/${id}`);
         // Actualizar lista quitando el auto eliminado
         this.cars = this.cars.filter(car => car.id !== id);
       } catch (error) {

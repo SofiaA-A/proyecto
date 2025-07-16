@@ -68,6 +68,7 @@ import {
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 import axios from "axios"
+const baseURL = import.meta.env.VITE_API_URL
 
 // Iconos para los marcadores
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png"
@@ -100,7 +101,7 @@ export default {
       routePoints: [],          // puntos de ruta
       routes: [],               // rutas completas para la tabla
       center: [0, 0],           // centro del mapa
-      geoFences: []             // 🔥 todas las geocercas
+      geoFences: []             // todas las geocercas
     }
   },
   async mounted() {
@@ -110,7 +111,7 @@ export default {
       if (!userId) throw new Error("Usuario no autenticado")
 
       // Obtener el auto del cliente
-      const carRes = await axios.get(`http://localhost:3000/api/cars/user/${userId}`)
+      const carRes = await axios.get(`${baseURL}/api/cars/user/${userId}`)
       const car = carRes.data
 
       if (!car || !car.latlong) throw new Error("Carro sin coordenadas")
@@ -127,7 +128,7 @@ export default {
       }
 
       // Obtener las rutas asociadas a ese carro
-      const routeRes = await axios.get(`http://localhost:3000/api/route/car/${car.id}`)
+      const routeRes = await axios.get(`${baseURL}/api/route/car/${car.id}`)
       const apiRoutes = routeRes.data.routes || []
 
       // Combinar la ruta inicial del carro con las rutas del backend
@@ -138,11 +139,10 @@ export default {
         return [lat, lng]
       })
 
-      // 🔵 Obtener TODAS las geocercas asociadas al carro
-      const geoRes = await axios.get(`http://localhost:3000/api/geocercas/car/${car.id}`)
+      // Obtener TODAS las geocercas asociadas al carro
+      const geoRes = await axios.get(`${baseURL}/api/geocercas/car/${car.id}`)
       const fences = geoRes.data
 
-      // 🔥 Si la API devuelve un solo objeto, conviértelo en array
       this.geoFences = Array.isArray(fences) ? fences : [fences]
 
     } catch (err) {
@@ -151,7 +151,7 @@ export default {
   },
   methods: {
     getMarkerIcon(point) {
-      // 🔥 Revisar si el punto está dentro de alguna geocerca
+      // Revisar si el punto está dentro de alguna geocerca
       let isInsideAnyFence = false
 
       for (const fence of this.geoFences) {

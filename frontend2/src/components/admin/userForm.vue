@@ -40,6 +40,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
+const baseURL = import.meta.env.VITE_API_URL
 
 const route = useRoute()
 const router = useRouter()
@@ -58,7 +59,7 @@ onMounted(async () => {
   if (id) {
     isEdit.value = true
     try {
-      const res = await axios.get(`http://localhost:3000/api/users/${id}`)
+      const res = await axios.get(`${baseURL}/api/users/${id}`)
       user.value.name = res.data.name
       user.value.email = res.data.email
       user.value.role = res.data.role
@@ -73,10 +74,10 @@ const submitForm = async () => {
   try {
     const id = route.params.id
     if (isEdit.value) {
-      await axios.put(`http://localhost:3000/api/users/${id}`, user.value)
+      await axios.put(`${baseURL}/api/users/${id}`, user.value)
       alert('Usuario actualizado correctamente')
     } else {
-      await axios.post('http://localhost:3000/api/users/register', user.value)
+      await axios.post(`${baseURL}/api/users/register`, user.value)
       alert('Usuario registrado correctamente')
     }
     router.push('/admin/users')
