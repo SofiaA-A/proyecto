@@ -26,6 +26,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
+import Swal from 'sweetalert2' // Importamos SweetAlert2
 const baseURL = import.meta.env.VITE_API_URL
 
 const route = useRoute()
@@ -42,10 +43,6 @@ const geocerca = ref({
 })
 
 onMounted(() => {
-
-
-
-  // Obtenemos car_id desde la URL
   const carId = route?.params?.carId
   const userId = route?.params?.userId
   geocerca.value.car_id = parseInt(carId)
@@ -63,6 +60,7 @@ onMounted(() => {
       })
       .catch(error => {
         console.error('Error al obtener la geocerca:', error)
+        Swal.fire('Error', 'No se pudo cargar la geocerca.', 'error')
       })
   }
 })
@@ -73,7 +71,7 @@ const submitForm = async () => {
     !geocerca.value.lat ||
     !geocerca.value.radius
   ) {
-    alert('Por favor, llena todos los campos')
+    Swal.fire('Atención', 'Por favor, llena todos los campos.', 'warning')
     return
   }
 
@@ -81,13 +79,6 @@ const submitForm = async () => {
     const id = route.params.id
 
     const payload = {
-      /*center: {
-        type: 'Point',
-        coordinates: [
-          parseFloat(geocerca.value.lng),
-          parseFloat(geocerca.value.lat)
-        ]
-      },*/
       lng: geocerca.value.lng,
       lat: geocerca.value.lat,
       radius: parseInt(geocerca.value.radius),
@@ -97,21 +88,33 @@ const submitForm = async () => {
 
     if (isEdit.value) {
       await axios.put(`${baseURL}/api/geocercas/${id}`, payload)
-      alert('Geocerca actualizada correctamente')
+      // ✅ Alerta de éxito
+      Swal.fire({
+        title: '¡Actualizado!',
+        text: 'La geocerca se actualizó correctamente.',
+        icon: 'success',
+        confirmButtonText: 'Ver rutas'
+      }).then(() => {
+        router.push(`/admin/routes/car/${geocerca.value.car_id}/${geocerca.value.user_id}`)
+      })
     } else {
       await axios.post(`${baseURL}/api/geocercas`, payload)
-      alert('Geocerca registrada correctamente')
+      // ✅ Alerta de éxito
+      Swal.fire({
+        title: '¡Registrado!',
+        text: 'La geocerca se registró correctamente.',
+        icon: 'success',
+        confirmButtonText: 'Ver rutas'
+      }).then(() => {
+        router.push(`/admin/routes/car/${geocerca.value.car_id}/${geocerca.value.user_id}`)
+      })
     }
-
-    // Redirigir al mapa con el car_id
-    router.push(`/admin/routes/car/${geocerca.value.car_id}/${geocerca.value.user_id}`)
   } catch (error) {
     console.error('Error al guardar la geocerca:', error)
-    alert('Hubo un error al guardar la geocerca')
+    Swal.fire('Error', 'Hubo un error al guardar la geocerca.', 'error')
   }
 }
 </script>
-
 
 <style scoped>
 .user-form {

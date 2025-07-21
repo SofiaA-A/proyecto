@@ -14,12 +14,11 @@
       <label>Año:</label>
       <input v-model="car.year" type="text" required />
 
-       <label>Latitud:</label>
+      <label>Latitud:</label>
       <input v-model="car.lat" type="text" required />
 
-       <label>Longitud:</label>
+      <label>Longitud:</label>
       <input v-model="car.lng" type="text" required />
-
 
       <label>Propietario:</label>
       <select v-model="car.user_id">
@@ -38,7 +37,8 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from 'axios'
+import Swal from 'sweetalert2' // Importamos SweetAlert2
 const baseURL = import.meta.env.VITE_API_URL
 
 export default {
@@ -57,76 +57,84 @@ export default {
       users: [],
       imageFile: null,
       isEdit: false,
-    };
+    }
   },
   created() {
-    this.loadUsers();
-    const id = this.$route.params.id;
+    this.loadUsers()
+    const id = this.$route.params.id
     if (id) {
-      this.isEdit = true;
-      this.loadCar(id);
+      this.isEdit = true
+      this.loadCar(id)
     }
   },
   methods: {
     async loadUsers() {
       try {
-        const res = await axios.get(`${baseURL}/api/users`);
-        this.users = res.data;
+        const res = await axios.get(`${baseURL}/api/users`)
+        this.users = res.data
       } catch (error) {
-        console.error('Error cargando usuarios:', error);
+        console.error('Error cargando usuarios:', error)
       }
     },
     async loadCar(id) {
       try {
-        const res = await axios.get(`${baseURL}/api/car/${id}`);
-        this.car = res.data;
+        const res = await axios.get(`${baseURL}/api/car/${id}`)
+        this.car = res.data
       } catch (error) {
-        console.error('Error cargando carro:', error);
+        console.error('Error cargando carro:', error)
       }
     },
     handleImageUpload(event) {
-      this.imageFile = event.target.files[0];
+      this.imageFile = event.target.files[0]
     },
     async submitForm() {
       try {
-        const formData = new FormData();
-        formData.append('brand', this.car.brand);
-        formData.append('model', this.car.model);
-        formData.append('plate', this.car.plate);
-        formData.append('year', this.car.year);
-        formData.append('lat', this.car.lat);
+        const formData = new FormData()
+        formData.append('brand', this.car.brand)
+        formData.append('model', this.car.model)
+        formData.append('plate', this.car.plate)
+        formData.append('year', this.car.year)
+        formData.append('lat', this.car.lat)
         formData.append('lng', this.car.lng)
 
-        // Si user_id es null, enviamos cadena vacía para que backend lo convierta en null
-        formData.append('user_id', this.car.user_id === null ? '' : this.car.user_id);
+        // Si user_id es null, enviamos cadena vacía
+        formData.append('user_id', this.car.user_id === null ? '' : this.car.user_id)
 
         if (this.imageFile) {
-          formData.append('image', this.imageFile);
+          formData.append('image', this.imageFile)
         }
 
         const config = {
           headers: { 'Content-Type': 'multipart/form-data' },
-        };
-
-        if (this.isEdit) {
-          await axios.put(`${baseURL}/api/car/${this.$route.params.id}`, formData, config);
-        } else {
-          await axios.post(`${baseURL}/api/car`, formData, config);
         }
 
-        alert('Carro guardado exitosamente');
-        this.$router.push('/admin/cars');
+        if (this.isEdit) {
+          await axios.put(`${baseURL}/api/car/${this.$route.params.id}`, formData, config)
+        } else {
+          await axios.post(`${baseURL}/api/car`, formData, config)
+        }
+
+        //  Alerta de éxito
+        Swal.fire({
+          title: '¡Éxito!',
+          text: 'El carro se guardó correctamente.',
+          icon: 'success',
+          confirmButtonText: 'Ir a la lista'
+        }).then(() => {
+          this.$router.push('/admin/cars') // Redirigir después de confirmar
+        })
       } catch (error) {
         if (error.response && error.response.status === 400) {
-          alert(error.response.data.message || 'Error de validación');
+          //  Alerta de validación
+          Swal.fire('Error', error.response.data.message || 'Error de validación', 'error')
         } else {
-          console.error('Error guardando carro:', error);
-          alert('Error inesperado al guardar el carro');
+          console.error('Error guardando carro:', error)
+          Swal.fire('Error', 'Ocurrió un error inesperado al guardar el carro', 'error')
         }
       }
     },
   },
-};
+}
 </script>
 
 <style scoped>

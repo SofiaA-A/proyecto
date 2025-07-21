@@ -13,37 +13,54 @@
   </div>
 </template>
 
-<script>
-import axios from 'axios';
+<script setup>
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
+import Swal from 'sweetalert2' // Importamos SweetAlert2
+
 const baseURL = import.meta.env.VITE_API_URL
 
-export default {
-  props: ['carId'],
-  data() {
-    return {
-      route: {
-        lat: '',
-        lng: '',
-        car_id: null
-      }
-    };
-  },
-  created() {
-    this.route.car_id = this.carId;
-  },
-  methods: {
-    async submitForm() {
-      try {
-        await axios.post(`${baseURL}/api/route/`, this.route);
-        alert('Ruta guardada exitosamente');
-        this.$router.push('/admin/routes');
-      } catch (error) {
-        console.error('Error al guardar la ruta:', error);
-        alert('Ocurrió un error al guardar la ruta');
-      }
-    }
+// Props
+const props = defineProps({
+  carId: {
+    type: Number,
+    required: true
   }
-};
+})
+
+const router = useRouter()
+
+// Estado reactivo
+const route = ref({
+  lat: '',
+  lng: '',
+  car_id: null
+})
+
+// Asignar car_id al montar
+onMounted(() => {
+  route.value.car_id = props.carId
+})
+
+const submitForm = async () => {
+  try {
+    await axios.post(`${baseURL}/api/route/`, route.value)
+
+    // Mostrar éxito con SweetAlert2
+    Swal.fire({
+      title: '¡Guardado!',
+      text: 'El punto de la ruta se guardó correctamente.',
+      icon: 'success',
+      confirmButtonText: 'Ver rutas'
+    }).then(() => {
+      router.push('/admin/routes')
+    })
+  } catch (error) {
+    console.error('Error al guardar la ruta:', error)
+    Swal.fire('Error', 'Ocurrió un error al guardar la ruta.', 'error')
+  }
+}
 </script>
 
 <style scoped>

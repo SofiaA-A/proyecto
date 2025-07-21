@@ -6,7 +6,6 @@
       <input v-model="password" type="password" placeholder="Contraseña" required />
       <button type="submit">Ingresar</button>
     </form>
-    <p v-if="error" class="error-msg">{{ error }}</p>
   </div>
 </template>
 
@@ -14,35 +13,38 @@
 import { ref } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import Swal from 'sweetalert2' // ✅ Importamos SweetAlert2
 
 const email = ref('')
 const password = ref('')
-const error = ref(null)
-
 const router = useRouter()
 
-const handleLogin = async () => {
-  error.value = null
-  try {
-    const response = await axios.post('http://localhost:3000/api/auth/login', {
-      email: email.value,
-      password: password.value
-    })
-
-    const user = response.data.user
-    localStorage.setItem('user', JSON.stringify(user))
-    localStorage.setItem('user_id', user.id)
-
-    if (user.role === 'admin') {
-      router.push('/admin/dashboard')
-    } else if (user.role === 'client') {
-      router.push('/client/dashboard')
-    } else {
-      error.value = 'Rol de usuario no reconocido.'
-    }
-  } catch (error) {
-    error.value = 'Credenciales incorrectas o error en el servidor.'
+async function handleLogin() {
+  // ✅ Encerramos todo en la función async
+  const loginData = {
+    email: email.value,
+    password: password.value
   }
+
+  axios.post('http://localhost:3000/api/auth/login', loginData)
+    .then((res) => {
+      const user = res.data.user
+      localStorage.setItem('user', JSON.stringify(user))
+
+      // ✅ Alerta de éxito
+      Swal.fire('¡Bienvenido!', 'Inicio de sesión exitoso', 'success')
+
+      // Redirigir según el rol
+      if (user.role === 'admin') {
+        router.push('/admin/dashboard')
+      } else if (user.role === 'client') {
+        router.push('/client/dashboard')
+      }
+    })
+    .catch(() => {
+      // ❌ Alerta de error
+      Swal.fire('Error', 'Correo o contraseña incorrectos', 'error')
+    })
 }
 </script>
 
@@ -55,7 +57,6 @@ const handleLogin = async () => {
   border-radius: 12px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
   text-align: center;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 h2 {
@@ -73,26 +74,18 @@ input {
   padding: 0.75rem;
   border: 1px solid #cbd5e1;
   border-radius: 6px;
-  font-size: 15px;
 }
 
 button {
   padding: 0.75rem;
   background-color: #3b82f6;
   color: white;
-  font-weight: 600;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
 }
 
 button:hover {
   background-color: #2563eb;
-}
-
-.error-msg {
-  color: red;
-  margin-top: 1rem;
 }
 </style>

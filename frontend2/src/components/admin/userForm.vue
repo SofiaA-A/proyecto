@@ -18,7 +18,7 @@
           type="password"
           v-model="user.password"
           :required="!isEdit"
-          placeholder="Agrega nueva contraseña "
+          placeholder="Agrega nueva contraseña"
         />
       </div>
 
@@ -40,6 +40,8 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
+import Swal from 'sweetalert2' // Importamos SweetAlert2
+
 const baseURL = import.meta.env.VITE_API_URL
 
 const route = useRoute()
@@ -63,9 +65,10 @@ onMounted(async () => {
       user.value.name = res.data.name
       user.value.email = res.data.email
       user.value.role = res.data.role
-      // No llenamos password
+      //  No llenamos password para evitar mostrarla
     } catch (error) {
       console.error('Error al obtener datos del usuario:', error)
+      Swal.fire('Error', 'No se pudieron cargar los datos del usuario.', 'error')
     }
   }
 })
@@ -73,17 +76,32 @@ onMounted(async () => {
 const submitForm = async () => {
   try {
     const id = route.params.id
+
     if (isEdit.value) {
       await axios.put(`${baseURL}/api/users/${id}`, user.value)
-      alert('Usuario actualizado correctamente')
+      //  Alerta SweetAlert2
+      Swal.fire({
+        title: '¡Actualizado!',
+        text: 'El usuario fue actualizado correctamente.',
+        icon: 'success',
+        confirmButtonText: 'Ver usuarios'
+      }).then(() => {
+        router.push('/admin/users')
+      })
     } else {
       await axios.post(`${baseURL}/api/users/register`, user.value)
-      alert('Usuario registrado correctamente')
+      Swal.fire({
+        title: '¡Registrado!',
+        text: 'El usuario fue registrado correctamente.',
+        icon: 'success',
+        confirmButtonText: 'Ver usuarios'
+      }).then(() => {
+        router.push('/admin/users')
+      })
     }
-    router.push('/admin/users')
   } catch (error) {
     console.error('Error al guardar el usuario:', error)
-    alert('Hubo un error al guardar el usuario')
+    Swal.fire('Error', 'Hubo un error al guardar el usuario.', 'error')
   }
 }
 </script>
