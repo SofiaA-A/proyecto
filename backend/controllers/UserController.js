@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 exports.getAll = async (req, res) => {
   try {
     const users = await User.findAll({
-      attributes: ['id', 'name', 'email', 'role'] // Evita mandar password
+      attributes: ['id', 'name', 'lastname', 'email', 'role'] // Evita mandar password
     });
     res.json(users);
   } catch (error) {
@@ -29,11 +29,12 @@ exports.getUserById = async (req, res) => {
 
 // Crear nuevo usuario
 exports.crearUsuario = async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name,lastname, email, password, role } = req.body;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const nuevoUsuario = await User.create({
       name,
+      lastname,
       email,
       password: hashedPassword,
       role
@@ -47,7 +48,7 @@ exports.crearUsuario = async (req, res) => {
 // Editar usuario
 exports.editarUsuario = async (req, res) => {
   const { id } = req.params;
-  const { name, email, password, role } = req.body;
+  const { name, lastname, email, password, role } = req.body;
   try {
     const usuario = await User.findByPk(id);
     if (!usuario) return res.status(404).json({ message: 'Usuario no encontrado' });
@@ -55,9 +56,9 @@ exports.editarUsuario = async (req, res) => {
     // Solo actualiza la contraseña si se envió
     if (password && password !== '') {
       const hashedPassword = await bcrypt.hash(password, 10);
-      await usuario.update({ name, email, password: hashedPassword, role });
+      await usuario.update({ name, lastname, email, password: hashedPassword, role });
     } else {
-      await usuario.update({ name, email, role });
+      await usuario.update({ name, lastname, email, role });
     }
 
     res.json({ message: 'Usuario actualizado correctamente', user: usuario });

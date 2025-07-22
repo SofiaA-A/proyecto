@@ -26,8 +26,8 @@ module.exports = {
         allowNull: false
       },
       image: {
-        type: Sequelize.STRING,
-        allowNull: true
+          type: Sequelize.STRING,
+          allowNull: true
       },
       latlong: {
         type: Sequelize.GEOGRAPHY('POINT', 4326),

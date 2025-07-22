@@ -6,13 +6,24 @@ module.exports = {
     await queryInterface.bulkInsert('Users', [
       {
         name: 'Sofia',
+        lastname: 'Aguilera',
         email: 'sofia@gmail.com',
-        password: bcrypt('tres2442'),
+        image: '/images/User.png',
+        password: bcrypt.hashSync('tres2442', 10),
         role: 'admin',
         createdAt: new Date(),
         updatedAt: new Date()
       },
-      // Puedes agregar más usuarios aquí
+      {
+        name: 'Carlos', 
+        lastname: 'Torres',
+        email: 'carlos@gmail.com',
+        image: '/images/User.png',
+        password: bcrypt.hashSync('tres2442', 10),
+        role: 'client',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
     ]);
   },
 

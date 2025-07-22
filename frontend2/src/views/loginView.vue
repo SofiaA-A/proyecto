@@ -13,25 +13,26 @@
 import { ref } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
-import Swal from 'sweetalert2' // ✅ Importamos SweetAlert2
+import Swal from 'sweetalert2' //  Importamos SweetAlert2
+const baseURL = import.meta.env.VITE_API_URL
 
 const email = ref('')
 const password = ref('')
 const router = useRouter()
 
 async function handleLogin() {
-  // ✅ Encerramos todo en la función async
+  //  Encerramos todo en la función async
   const loginData = {
     email: email.value,
     password: password.value
   }
 
-  axios.post('http://localhost:3000/api/auth/login', loginData)
+  axios.post(`${baseURL}/api/auth/login`, loginData)
     .then((res) => {
       const user = res.data.user
       localStorage.setItem('user', JSON.stringify(user))
 
-      // ✅ Alerta de éxito
+      //  Alerta de éxito
       Swal.fire('¡Bienvenido!', 'Inicio de sesión exitoso', 'success')
 
       // Redirigir según el rol
@@ -42,7 +43,7 @@ async function handleLogin() {
       }
     })
     .catch(() => {
-      // ❌ Alerta de error
+      //  Alerta de error
       Swal.fire('Error', 'Correo o contraseña incorrectos', 'error')
     })
 }

@@ -12,6 +12,7 @@
         <tr>
           <th>ID</th>
           <th>Nombre</th>
+          <th>Apellido</th>
           <th>Correo</th>
           <th>Rol</th>
           <th>Acciones</th>
@@ -21,6 +22,7 @@
         <tr v-for="user in users" :key="user.id">
           <td>{{ user.id }}</td>
           <td>{{ user.name }}</td>
+          <td>{{ user.lastname }}</td>
           <td>{{ user.email }}</td>
           <td>{{ user.role }}</td>
           <td>

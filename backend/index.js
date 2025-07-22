@@ -7,6 +7,7 @@ const cors = require('cors');
 const { Sequelize } = require('sequelize');
 const multer = require('multer');
 const load = multer({dest:'uploads'})
+
 const carRoutes = require('./routes/car');
 const geocercaRoutes = require('./routes/geocerca');
 
@@ -18,8 +19,8 @@ const PORT = process.env.PORT || 3000;
 // 4 Middleware global
 app.use(cors());
 app.use(express.json());
-app.use('/uploads', express.static('uploads'));
-
+app.use('/', express.static('uploads'));
+app.use('/', express. static('images'));
 // 5 Conexión a la base de datos usando .env
 const sequelize = new Sequelize(
   process.env.DB_NAME,
@@ -57,6 +58,7 @@ sequelize.authenticate()
 // 9 Rutas
 
 app.use('/uploads', express.static('uploads'));
+app.use('/images', express.static('images'));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/route', require('./routes/route'));
 app.use('/api/car', require('./routes/car'));
