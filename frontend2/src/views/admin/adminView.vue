@@ -2,8 +2,13 @@
   <div class="admin-layout">
     <!-- Cabecera -->
     <header class="admin-header">
-      <h1>Panel de Administración</h1>
-      <p>Hola, {{ userName }}</p>
+      <div class="user-header">
+        <img :src="userImage" alt="Perfil" class="profile-img" />
+        <div class="user-text">
+          <h1>Panel de Administración</h1>
+          <p>Hola, {{ userName }}</p>
+        </div>
+      </div>
 
       <!-- Botón hamburguesa -->
       <button class="menu-toggle" @click="toggleSidebar">☰</button>
@@ -47,25 +52,27 @@ export default {
   name: 'AdminView',
   data() {
     return {
-      sidebarOpen: false // Controla si el menú lateral está abierto o cerrado
+      sidebarOpen: false,
+      userName: '',
+      userImageUrl: ''
     };
+  },
+  mounted() {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+      this.userName = user.name;
+      this.userImageUrl = `http://localhost:3000${user.image}`;
+    }
   },
   methods: {
     toggleSidebar() {
       this.sidebarOpen = !this.sidebarOpen;
     },
     closeSidebar() {
-      // Cierra el menú cuando se hace clic en un enlace (solo en móvil)
       this.sidebarOpen = false;
     },
     logout() {
       localStorage.clear();
-    }
-  },
-  computed: {
-    userName() {
-      const user = JSON.parse(localStorage.getItem('user'));
-      return user?.name || 'Admin';
     }
   }
 };
@@ -90,6 +97,23 @@ export default {
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Contenedor para imagen y texto */
+.user-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Imagen de perfil */
+.profile-img {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fff;
+  background-color: white;
 }
 
 /* Botón hamburguesa oculto por defecto */
@@ -170,12 +194,10 @@ export default {
 
 /* ------------------ RESPONSIVE ------------------ */
 @media (max-width: 768px) {
-  /* Mostrar botón hamburguesa */
   .menu-toggle {
     display: block;
   }
 
-  /* Sidebar oculto por defecto */
   .admin-sidebar {
     position: fixed;
     left: -250px;
@@ -189,12 +211,10 @@ export default {
     z-index: 1000;
   }
 
-  /* Sidebar visible cuando se abre */
   .admin-sidebar.sidebar-open {
     left: 0;
   }
 
-  /* La vista principal ocupa todo el ancho */
   .admin-main {
     padding: 1rem;
   }
