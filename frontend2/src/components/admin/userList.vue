@@ -14,6 +14,7 @@
           <th>Nombre</th>
           <th>Apellido</th>
           <th>Correo</th>
+          <th>Imagen</th>
           <th>Rol</th>
           <th>Acciones</th>
         </tr>
@@ -24,6 +25,10 @@
           <td>{{ user.name }}</td>
           <td>{{ user.lastname }}</td>
           <td>{{ user.email }}</td>
+          <td>
+            <img v-if="user.image" :src="baseURL + user.image" alt="Auto" width="50" style="border-radius: 6px;" />
+            <span v-else>Sin imagen</span>
+          </td>
           <td>{{ user.role }}</td>
           <td>
             <button class="btn edit" @click="editUser(user.id)">Editar</button>

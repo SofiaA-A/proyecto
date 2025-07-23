@@ -16,7 +16,7 @@ const authController = {
         return res.status(401).json({ message: 'Contraseña incorrecta' });
       }
 
-      res.json({ message: 'Login exitoso', user: { id: user.id, name: user.name, email: user.email, role: user.role } });
+      res.json({ message: 'Login exitoso', user: { id: user.id, name: user.name, lastname: user.lastname, email: user.email, role: user.role } });
 
     } catch (error) {
       console.error(error);
