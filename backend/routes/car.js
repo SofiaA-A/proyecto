@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const carController = require('../controllers/carController');
+const carController = require('../controllers/CarController');
 const multer = require('multer');
 
 // Configuración multer

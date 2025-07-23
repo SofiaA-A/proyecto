@@ -53,6 +53,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('geocercas');
+    await queryInterface.dropTable('Geocercas');
   }
 };

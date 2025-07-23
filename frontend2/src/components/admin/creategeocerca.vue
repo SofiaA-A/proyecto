@@ -88,7 +88,7 @@ const submitForm = async () => {
 
     if (isEdit.value) {
       await axios.put(`${baseURL}/api/geocercas/${id}`, payload)
-      // ✅ Alerta de éxito
+      //  Alerta de éxito
       Swal.fire({
         title: '¡Actualizado!',
         text: 'La geocerca se actualizó correctamente.',
@@ -99,7 +99,7 @@ const submitForm = async () => {
       })
     } else {
       await axios.post(`${baseURL}/api/geocercas`, payload)
-      // ✅ Alerta de éxito
+      //  Alerta de éxito
       Swal.fire({
         title: '¡Registrado!',
         text: 'La geocerca se registró correctamente.',

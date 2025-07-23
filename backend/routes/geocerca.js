@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const geocercaController = require('../controllers/geocercaController');
+const geocercaController = require('../controllers/GeoCercaController');
 
 //crear
 router.post('/', geocercaController.create);   
