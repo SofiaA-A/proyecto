@@ -34,7 +34,7 @@ exports.crearUsuario = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10)
 
     // Si se subió una imagen, guarda el path
-    const image = req.file ? `/images/${req.file.filename}` : null
+    const image = req.file ? `/ImagesUsers/${req.file.filename}` : null
 
     const nuevoUsuario = await User.create({
       name,

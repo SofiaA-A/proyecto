@@ -2,6 +2,8 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/UserController');
+const UploadsUsers = require('../middlewares/UploadsUsers');
+router.post('/register', UploadsUsers.single('image'), userController.crearUsuario);
 
 //mostar todos los usuarios
 router.get('/', userController.getAll);

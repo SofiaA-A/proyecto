@@ -40,9 +40,12 @@ const carController = {
     }
   },
 
-  // Crear un nuevo auto
+  // Crear un nuevo auto (con imagen)
   createCar: async (req, res) => {
     try {
+      console.log('req.body:', req.body);
+      console.log('req.file:', req.file);
+
       const { brand, model, plate, year, lat, lng } = req.body;
       let { user_id } = req.body;
 
@@ -50,7 +53,6 @@ const carController = {
         return res.status(400).json({ message: 'Faltan datos requeridos (marca, modelo, placa, año, lat, lng)' });
       }
 
-      // Validar y convertir user_id a null si es vacío o inválido
       if (!user_id || user_id === '' || user_id === 'null') {
         user_id = null;
       } else {
@@ -64,7 +66,7 @@ const carController = {
         brand,
         model,
         plate,
-        year,
+        year: parseInt(year),
         latlong: {
           type: 'Point',
           coordinates: [parseFloat(lng), parseFloat(lat)]
@@ -83,7 +85,7 @@ const carController = {
     }
   },
 
-  // Actualizar un auto existente
+  // Actualizar un auto existente (con manejo imagen)
   updateCar: async (req, res) => {
     try {
       const { id } = req.params;
@@ -95,7 +97,6 @@ const carController = {
         return res.status(404).json({ message: 'Auto no encontrado' });
       }
 
-      // Validar y convertir user_id a null si es vacío o inválido
       if (!user_id || user_id === '' || user_id === 'null') {
         user_id = null;
       } else {
@@ -109,7 +110,7 @@ const carController = {
         brand,
         model,
         plate,
-        year,
+        year: parseInt(year),
         latlong: (lat && lng)
           ? { type: 'Point', coordinates: [parseFloat(lng), parseFloat(lat)] }
           : car.latlong,
@@ -190,7 +191,6 @@ const carController = {
         return res.status(400).json({ message: 'Este auto ya fue asignado a otro usuario' });
       }
 
-      // Validar que el usuario no tenga ya un auto
       const existingCar = await Car.findOne({ where: { user_id: userId } });
       if (existingCar) {
         return res.status(400).json({ message: 'Este usuario ya tiene un auto asignado' });
