@@ -23,9 +23,9 @@ const router = useRouter()
 async function handleLogin() {
   //  Encerramos todo en la función async
   const loginData = {
-    email: email.value,
-    password: password.value
-  }
+  email: email.value.trim(),
+  password: password.value.trim()
+}
 
   axios.post(`${baseURL}/api/auth/login`, loginData)
     .then((res) => {
