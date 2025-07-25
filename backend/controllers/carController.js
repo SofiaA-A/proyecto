@@ -60,7 +60,7 @@ const carController = {
         if (isNaN(user_id)) user_id = null;
       }
 
-      const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
+      const imagePath = req.file ? `/uploads/${req.file.filename}` : `/images/CarDefecto.png`
 
       const car = await Car.create({
         brand,
