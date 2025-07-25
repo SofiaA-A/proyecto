@@ -1,17 +1,31 @@
 const { User } = require('../models')
 const bcrypt = require('bcrypt')
 
-// Obtener todos los usuarios
+// Obtener usuarios con paginación
 exports.getAll = async (req, res) => {
   try {
-    const users = await User.findAll({
-      attributes: ['id', 'name', 'lastname', 'email', 'image', 'role'] // Evita mandar password
+    const page = parseInt(req.query.page) || 1
+    const limit = parseInt(req.query.limit) || 6
+    const offset = (page - 1) * limit
+
+    const { count, rows } = await User.findAndCountAll({
+      attributes: ['id', 'name', 'lastname', 'email', 'image', 'role'], // sin password
+      limit,
+      offset,
+      order: [['id', 'ASC']]
     })
-    res.json(users)
+
+    res.json({
+      users: rows,
+      totalUsers: count,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page
+    })
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener usuarios', error: error.message })
   }
 }
+
 
 // Obtener usuario por ID
 exports.getUserById = async (req, res) => {

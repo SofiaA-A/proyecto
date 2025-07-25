@@ -1,17 +1,30 @@
 const { Car, User } = require('../models');
 
 const carController = {
-  // Obtener todos los autos con su propietario
+  // Obtener todos los autos con su propietario (paginados)
   getAllCars: async (req, res) => {
     try {
-      const cars = await Car.findAll({
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 5;
+      const offset = (page - 1) * limit;
+
+      const { count, rows: cars } = await Car.findAndCountAll({
+        limit,
+        offset,
         include: {
           model: User,
           as: 'user',
           attributes: ['id', 'name', 'email']
-        }
+        },
+        order: [['id', 'ASC']]
       });
-      res.json(cars);
+
+      res.json({
+        total: count,
+        page,
+        totalPages: Math.ceil(count / limit),
+        cars
+      });
     } catch (err) {
       res.status(500).json({ message: 'Error al obtener autos', error: err.message });
     }
@@ -43,9 +56,6 @@ const carController = {
   // Crear un nuevo auto (con imagen)
   createCar: async (req, res) => {
     try {
-      console.log('req.body:', req.body);
-      console.log('req.file:', req.file);
-
       const { brand, model, plate, year, lat, lng } = req.body;
       let { user_id } = req.body;
 
@@ -60,7 +70,7 @@ const carController = {
         if (isNaN(user_id)) user_id = null;
       }
 
-      const imagePath = req.file ? `/uploads/${req.file.filename}` : `/images/CarDefecto.png`
+      const imagePath = req.file ? `/uploads/${req.file.filename}` : `/images/CarDefecto.png`;
 
       const car = await Car.create({
         brand,
