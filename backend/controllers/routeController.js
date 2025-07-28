@@ -3,21 +3,31 @@ const { Route, Car, User } = require('../models');
 const routeController = {
   // Obtener todas las rutas
   async getAll(req, res) {
-    try {
-      const routes = await Route.findAll({
-        include: [
-          { model: Car, as: 'car' },
-          { model: User, as: 'user', attributes: ['id', 'name', 'email'] }
-        ],
-        attributes: ['id', 'car_id', 'user_id', 'latlong', 'createdAt', 'updatedAt']
-      });
-      res.json(routes);
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Error al obtener las rutas' });
-    }
-  },
+  try {
+    const routes = await Route.findAll({
+      include: [
+        { model: Car, as: 'car' },
+        { model: User, as: 'user', attributes: ['id', 'name', 'email'] }
+      ],
+      attributes: ['id', 'car_id', 'user_id', 'latlong', 'createdAt', 'updatedAt']
+    });
 
+    const formattedRoutes = routes.map(route => {
+      const data = route.toJSON();
+      const coords = data.latlong?.coordinates || [0, 0];
+      return {
+        ...data,
+        lng: coords[0],
+        lat: coords[1]
+      };
+    });
+
+    res.json(formattedRoutes);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error al obtener las rutas' });
+  }
+},
   // Obtener ruta por ID
   async getById(req, res) {
     try {
@@ -33,8 +43,7 @@ const routeController = {
       res.status(500).json({ error: 'Error al obtener la ruta' });
     }
   },
-
-  // Crear nueva ruta
+   
   // Crear nueva ruta
 async create(req, res) {
   try {

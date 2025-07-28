@@ -19,6 +19,8 @@
           <th>Modelo</th>
           <th>Placa</th>
           <th>Año</th>
+          <th>Latitud</th>
+          <th>Longitud</th>
           <th>Imagen</th>
           <th>Usuario</th>
           <th>Acciones</th>
@@ -31,6 +33,8 @@
           <td>{{ car.model }}</td>
           <td>{{ car.plate }}</td>
           <td>{{ car.year }}</td>
+          <td>{{ car.lat }}</td>
+          <td>{{ car.lng }}</td>
           <td>
             <img
               v-if="car.image"

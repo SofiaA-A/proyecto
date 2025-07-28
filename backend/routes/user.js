@@ -7,6 +7,9 @@ router.post('/register', UploadsUsers.single('image'), userController.crearUsuar
 
 //mostar todos los usuarios
 router.get('/', userController.getAll);
+//muestra toso los usuarios sin un vehiculo
+router.get('/all', userController.getAllWithoutPagination);
+
  //mostar usuario por el id
 router.get('/:id',userController.getUserById)
 // Ruta para crear usuario

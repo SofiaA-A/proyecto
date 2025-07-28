@@ -66,6 +66,19 @@ exports.crearUsuario = async (req, res) => {
   }
 }
 
+  // Obtener todos los usuarios sin paginación (para selects, etc.)
+exports.getAllWithoutPagination = async (req, res) => {
+  try {
+    const users = await User.findAll({
+      attributes: ['id', 'name', 'lastname', 'email']
+    })
+    res.json(users)
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener todos los usuarios', error: error.message })
+  }
+}
+
+
 // Editar usuario
 exports.editarUsuario = async (req, res) => {
   try {

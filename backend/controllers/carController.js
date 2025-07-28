@@ -8,7 +8,7 @@ const carController = {
       const limit = parseInt(req.query.limit) || 5;
       const offset = (page - 1) * limit;
 
-      const { count, rows: cars } = await Car.findAndCountAll({
+      const { count, rows } = await Car.findAndCountAll({
         limit,
         offset,
         include: {
@@ -17,6 +17,19 @@ const carController = {
           attributes: ['id', 'name', 'email']
         },
         order: [['id', 'ASC']]
+      });
+
+      // Extraemos lat y lng del campo "latlong"
+      const cars = rows.map(car => {
+        const carData = car.toJSON();
+        if (carData.latlong && carData.latlong.coordinates) {
+          carData.lng = carData.latlong.coordinates[0];
+          carData.lat = carData.latlong.coordinates[1];
+        } else {
+          carData.lng = null;
+          carData.lat = null;
+        }
+        return carData;
       });
 
       res.json({

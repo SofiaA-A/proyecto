@@ -66,12 +66,12 @@ export default {
       this.isEdit = true
       this.loadCar(id)
     }
-  },
-  methods: {
-    async loadUsers() {
+    },
+      methods: {
+        async loadUsers() {
       try {
-        const res = await axios.get(`${baseURL}/api/users`)
-        this.users = res.data
+        const res = await axios.get(`${baseURL}/api/users/all`)
+        this.users = res.data;
       } catch (error) {
         console.error('Error cargando usuarios:', error)
       }
