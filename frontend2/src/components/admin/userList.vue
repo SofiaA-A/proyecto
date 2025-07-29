@@ -2,7 +2,7 @@
   <div class="user-list">
     <h2>Lista de Usuarios</h2>
 
-    <!-- Botón para agregar nuevo usuario -->
+    <!-- Botón y selector de cantidad -->
     <div class="mb-4">
       <button class="btn new" @click="$router.push('/admin/users/new')">+ Nuevo Usuario</button>
       <label for="limit">Usuarios por página: </label>
@@ -11,7 +11,30 @@
         <option :value="10">10</option>
       </select>
     </div>
+<td></td>
 
+    <!-- Filtros -->
+    <div class="filters mb-4">
+      <label for="name">Filtrar por nombre:</label>
+      <input
+        id="name"
+        v-model="filterName"
+        @input="handleFilterChange"
+        type="text"
+        placeholder="Buscar por nombre..."
+      />
+
+      <label for="email">Filtrar por correo:</label>
+      <input
+        id="email"
+        v-model="filterEmail"
+        @input="handleFilterChange"
+        type="text"
+        placeholder="Buscar por email..."
+      />
+    </div>
+
+    <!-- Tabla de usuarios -->
     <table>
       <thead>
         <tr>
@@ -71,12 +94,14 @@ const users = ref([])
 const currentPage = ref(1)
 const totalPages = ref(1)
 const limit = ref(5)
+const filterName = ref('')
+const filterEmail = ref('')
 const router = useRouter()
 
 const fetchUsers = async () => {
   try {
     const res = await axios.get(
-      `${baseURL}/api/users?page=${currentPage.value}&limit=${limit.value}`
+      `${baseURL}/api/users?page=${currentPage.value}&limit=${limit.value}&name=${filterName.value}&email=${filterEmail.value}`
     )
     users.value = res.data.users
     totalPages.value = res.data.totalPages
@@ -86,6 +111,11 @@ const fetchUsers = async () => {
 }
 
 const handleLimitChange = () => {
+  currentPage.value = 1
+  fetchUsers()
+}
+
+const handleFilterChange = () => {
   currentPage.value = 1
   fetchUsers()
 }
@@ -136,6 +166,26 @@ onMounted(() => {
 .user-list h2 {
   margin-bottom: 1rem;
   color: #1e293b;
+}
+
+.filters {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.filters label {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.filters input {
+  padding: 6px 12px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
 }
 
 table {
@@ -199,18 +249,6 @@ tr:hover {
 }
 
 .pagination {
-  margin-top: 1rem;
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
-select {
-  padding: 4px 8px;
-  font-size: 14px;
-  margin-left: 8px;
-}
-.pagination {
   margin-top: 1.5rem;
   display: flex;
   justify-content: center;
@@ -264,5 +302,4 @@ select:focus {
   border-color: #3b82f6;
   outline: none;
 }
-
 </style>

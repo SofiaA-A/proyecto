@@ -1,18 +1,32 @@
 const { User } = require('../models')
 const bcrypt = require('bcrypt')
 
-// Obtener usuarios con paginación
+const { Op } = require('sequelize')  // Agrega esto arriba en el archivo junto con tus imports
+
 exports.getAll = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1
     const limit = parseInt(req.query.limit) || 6
     const offset = (page - 1) * limit
 
+    const { name, email } = req.query
+
+    // Armar condiciones dinámicas para el filtro
+    const where = {}
+
+    if (name) {
+      where.name = { [Op.like]: `%${name}%` }  // filtro parcial nombre
+    }
+    if (email) {
+      where.email = { [Op.like]: `%${email}%` }  // filtro parcial email
+    }
+
     const { count, rows } = await User.findAndCountAll({
       attributes: ['id', 'name', 'lastname', 'email', 'image', 'role'], // sin password
       limit,
       offset,
-      order: [['id', 'ASC']]
+      order: [['id', 'ASC']],
+      where  // <-- aplicamos los filtros aquí
     })
 
     res.json({
@@ -25,7 +39,6 @@ exports.getAll = async (req, res) => {
     res.status(500).json({ message: 'Error al obtener usuarios', error: error.message })
   }
 }
-
 
 // Obtener usuario por ID
 exports.getUserById = async (req, res) => {

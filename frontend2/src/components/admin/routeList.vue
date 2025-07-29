@@ -3,10 +3,21 @@
     <h2>Rutas de Usuarios</h2>
 
     <div class="mb-4">
+      <label for="plateFilter">Filtrar por placa:</label>
+      <input
+        id="plateFilter"
+        type="text"
+        v-model="plateFilter"
+        @input="onPlateFilterChange"
+        placeholder="Escribe una placa..."
+        style="padding: 6px 12px; border-radius: 8px; border: 1.5px solid #cbd5e1; margin-right: 1rem;"
+      />
+
       <label for="limit">Autos por página:</label>
       <select id="limit" v-model="limit" @change="handleLimitChange">
         <option :value="5">5</option>
         <option :value="10">10</option>
+        <option :value="20">20</option>
       </select>
     </div>
 
@@ -56,17 +67,29 @@ const cars = ref([])
 const page = ref(1)
 const totalPages = ref(1)
 const limit = ref(5)
+const plateFilter = ref('')
 
 const router = useRouter()
 
 const fetchCars = async () => {
   try {
-    const res = await axios.get(`${baseURL}/api/cars?page=${page.value}&limit=${limit.value}`)
+    const res = await axios.get(`${baseURL}/api/cars`, {
+      params: {
+        page: page.value,
+        limit: limit.value,
+        plate: plateFilter.value.trim()
+      }
+    })
     cars.value = res.data.cars
     totalPages.value = res.data.totalPages
   } catch (error) {
     console.error('Error al cargar autos:', error)
   }
+}
+
+const onPlateFilterChange = () => {
+  page.value = 1
+  fetchCars()
 }
 
 const handleLimitChange = () => {
@@ -198,5 +221,9 @@ select:hover,
 select:focus {
   border-color: #3b82f6;
   outline: none;
+}
+input[type="text"] {
+  font-size: 15px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 </style>

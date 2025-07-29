@@ -2,23 +2,30 @@
   <div class="form-container">
     <h2>{{ isEdit ? 'Editar Carro' : 'Agregar Carro' }}</h2>
     <form @submit.prevent="submitForm" enctype="multipart/form-data">
+
       <label>Marca:</label>
-      <input v-model="car.brand" type="text" required />
+      <input v-model="car.brand" type="text" />
+      <p v-if="errors.brand" class="error">{{ errors.brand }}</p>
 
       <label>Modelo:</label>
-      <input v-model="car.model" type="text" required />
+      <input v-model="car.model" type="text" />
+      <p v-if="errors.model" class="error">{{ errors.model }}</p>
 
       <label>Placa:</label>
-      <input v-model="car.plate" type="text" required />
+      <input v-model="car.plate" type="text" />
+      <p v-if="errors.plate" class="error">{{ errors.plate }}</p>
 
       <label>Año:</label>
-      <input v-model="car.year" type="text" required />
+      <input v-model="car.year" type="text" />
+      <p v-if="errors.year" class="error">{{ errors.year }}</p>
 
       <label>Latitud:</label>
-      <input v-model="car.lat" type="text" required />
+      <input v-model="car.lat" type="text" />
+      <p v-if="errors.lat" class="error">{{ errors.lat }}</p>
 
       <label>Longitud:</label>
-      <input v-model="car.lng" type="text" required />
+      <input v-model="car.lng" type="text" />
+      <p v-if="errors.lng" class="error">{{ errors.lng }}</p>
 
       <label>Propietario:</label>
       <select v-model="car.user_id">
@@ -38,7 +45,7 @@
 
 <script>
 import axios from 'axios'
-import Swal from 'sweetalert2' // Importamos SweetAlert2
+import Swal from 'sweetalert2'
 const baseURL = import.meta.env.VITE_API_URL
 
 export default {
@@ -57,6 +64,7 @@ export default {
       users: [],
       imageFile: null,
       isEdit: false,
+      errors: {},  // <-- Errores de validación
     }
   },
   created() {
@@ -66,9 +74,9 @@ export default {
       this.isEdit = true
       this.loadCar(id)
     }
-    },
-      methods: {
-        async loadUsers() {
+  },
+  methods: {
+    async loadUsers() {
       try {
         const res = await axios.get(`${baseURL}/api/users/all`)
         this.users = res.data;
@@ -84,10 +92,60 @@ export default {
         console.error('Error cargando carro:', error)
       }
     },
+
     handleImageUpload(event) {
       this.imageFile = event.target.files[0]
     },
+
+    validateForm() {
+      this.errors = {}
+
+      if (!this.car.brand.trim()) {
+        this.errors.brand = 'La marca es obligatoria.'
+      }
+
+      if (!this.car.model.trim()) {
+        this.errors.model = 'El modelo es obligatorio.'
+      }
+
+      if (!this.car.plate.trim()) {
+        this.errors.plate = 'La placa es obligatoria.'
+      }
+
+      if (!this.car.year.trim()) {
+      this.errors.year = 'El año es obligatorio.'
+    } else if (!/^\d{4}$/.test(this.car.year)) {
+      this.errors.year = 'El año debe ser un número de 4 dígitos.'
+    } else {
+      const yearNum = parseInt(this.car.year, 10)
+      if (yearNum < 1980 || yearNum > 2026) {
+        this.errors.year = 'El año debe estar entre 1980 y 2026.'
+      }
+    }
+
+
+      if (!this.car.lat.trim()) {
+        this.errors.lat = 'La latitud es obligatoria.'
+      } else if (isNaN(parseFloat(this.car.lat))) {
+        this.errors.lat = 'La latitud debe ser un número válido.'
+      }
+
+      if (!this.car.lng.trim()) {
+        this.errors.lng = 'La longitud es obligatoria.'
+      } else if (isNaN(parseFloat(this.car.lng))) {
+        this.errors.lng = 'La longitud debe ser un número válido.'
+      }
+
+      // No validamos propietario ni imagen porque pueden ser opcionales
+
+      return Object.keys(this.errors).length === 0
+    },
+
     async submitForm() {
+      if (!this.validateForm()) {
+        return Swal.fire('Formulario inválido', 'Corrige los errores antes de enviar.', 'warning')
+      }
+
       try {
         const formData = new FormData()
         formData.append('brand', this.car.brand)
@@ -96,17 +154,13 @@ export default {
         formData.append('year', this.car.year)
         formData.append('lat', this.car.lat)
         formData.append('lng', this.car.lng)
-
-        // Si user_id es null, enviamos cadena vacía
         formData.append('user_id', this.car.user_id === null ? '' : this.car.user_id)
 
         if (this.imageFile) {
           formData.append('image', this.imageFile)
         }
 
-        const config = {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        }
+        const config = { headers: { 'Content-Type': 'multipart/form-data' } }
 
         if (this.isEdit) {
           await axios.put(`${baseURL}/api/car/${this.$route.params.id}`, formData, config)
@@ -114,25 +168,23 @@ export default {
           await axios.post(`${baseURL}/api/car`, formData, config)
         }
 
-        //  Alerta de éxito
         Swal.fire({
           title: '¡Éxito!',
           text: 'El carro se guardó correctamente.',
           icon: 'success',
           confirmButtonText: 'Ir a la lista'
         }).then(() => {
-          this.$router.push('/admin/cars') // Redirigir después de confirmar
+          this.$router.push('/admin/cars')
         })
       } catch (error) {
         if (error.response && error.response.status === 400) {
-          //  Alerta de validación
           Swal.fire('Error', error.response.data.message || 'Error de validación', 'error')
         } else {
           console.error('Error guardando carro:', error)
           Swal.fire('Error', 'Ocurrió un error inesperado al guardar el carro', 'error')
         }
       }
-    },
+    }
   },
 }
 </script>
@@ -167,7 +219,7 @@ label {
 input[type="text"],
 input[type="file"],
 select {
-  margin-bottom: 1rem;
+  margin-bottom: 0.25rem;
   padding: 0.6rem;
   border: 1px solid #cbd5e1;
   border-radius: 6px;
@@ -185,9 +237,16 @@ button {
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  margin-top: 1rem;
 }
 
 button:hover {
   background-color: #059669;
+}
+
+.error {
+  color: red;
+  font-size: 13px;
+  margin-bottom: 0.75rem;
 }
 </style>

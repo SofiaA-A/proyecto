@@ -1,14 +1,23 @@
 const { Car, User } = require('../models');
+const { Op } = require('sequelize');
 
 const carController = {
-  // Obtener todos los autos con su propietario (paginados)
+  // Obtener todos los autos con su propietario (paginados) + filtro placa
   getAllCars: async (req, res) => {
     try {
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 5;
       const offset = (page - 1) * limit;
+      const plate = req.query.plate || '';  // obtener filtro placa
+
+      // Condición where para filtro placa (LIKE %plate%)
+      const where = {};
+      if (plate) {
+        where.plate = { [Op.like]: `%${plate}%` };
+      }
 
       const { count, rows } = await Car.findAndCountAll({
+        where,
         limit,
         offset,
         include: {

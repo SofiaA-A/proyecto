@@ -4,11 +4,25 @@
 
     <div class="mb-4">
       <button class="btn new" @click="$router.push('/admin/cars/new')">+ Nuevo Auto</button>
-      <label for="limit">Autos por página:</label>
+      <label for="limit">Autos por página: </label>
       <select id="limit" v-model="limit" @change="handleLimitChange">
         <option :value="5">5</option>
         <option :value="10">10</option>
+        <option :value="20">20</option>
       </select>
+    </div>
+    <TD></TD>
+
+    <!-- Filtro por placa -->
+    <div class="filters mb-4">
+      <label for="plate">Filtrar por placa:</label>
+      <input
+        id="plate"
+        v-model="filterPlate"
+        @input="handleFilterChange"
+        type="text"
+        placeholder="Buscar por placa..."
+      />
     </div>
 
     <table>
@@ -78,12 +92,13 @@ const cars = ref([])
 const currentPage = ref(1)
 const totalPages = ref(1)
 const limit = ref(5)
+const filterPlate = ref('') // filtro placa
 const router = useRouter()
 
 const fetchCars = async () => {
   try {
     const res = await axios.get(
-      `${baseURL}/api/car?page=${currentPage.value}&limit=${limit.value}`
+      `${baseURL}/api/car?page=${currentPage.value}&limit=${limit.value}&plate=${filterPlate.value}`
     )
     cars.value = res.data.cars
     totalPages.value = res.data.totalPages
@@ -93,6 +108,11 @@ const fetchCars = async () => {
 }
 
 const handleLimitChange = () => {
+  currentPage.value = 1
+  fetchCars()
+}
+
+const handleFilterChange = () => {
   currentPage.value = 1
   fetchCars()
 }
@@ -133,7 +153,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Mismos estilos de user list */
 .user-list {
   background-color: white;
   padding: 1.5rem;
@@ -145,6 +164,26 @@ onMounted(() => {
   color: #1e293b;
 }
 
+/* Filtros */
+.filters {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+.filters label {
+  font-weight: 600;
+  color: #1e293b;
+}
+.filters input {
+  padding: 6px 12px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* Tabla */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -165,6 +204,7 @@ tr:hover {
   background-color: #f9fafb;
 }
 
+/* Botones */
 .new {
   background-color: #10b981;
   font-weight: 600;
@@ -202,6 +242,7 @@ tr:hover {
   background-color: #dc2626;
 }
 
+/* Paginación */
 .pagination {
   margin-top: 1.5rem;
   display: flex;
@@ -210,7 +251,6 @@ tr:hover {
   gap: 12px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-
 .pagination button {
   background-color: #3b82f6;
   border: none;
@@ -237,7 +277,6 @@ tr:hover {
   font-weight: 600;
   color: #334155;
 }
-
 select {
   padding: 6px 12px;
   font-size: 15px;

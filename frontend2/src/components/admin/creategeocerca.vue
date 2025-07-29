@@ -26,9 +26,9 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
-import Swal from 'sweetalert2' // Importamos SweetAlert2
-const baseURL = import.meta.env.VITE_API_URL
+import Swal from 'sweetalert2'
 
+const baseURL = import.meta.env.VITE_API_URL
 const route = useRoute()
 const router = useRouter()
 
@@ -54,8 +54,8 @@ onMounted(() => {
     axios.get(`${baseURL}/api/geocercas/${id}`)
       .then(res => {
         const center = res.data.center.coordinates
-        geocerca.value.lng = center[1]
-        geocerca.value.lat = center[0]
+        geocerca.value.lng = center[0] // longitud
+        geocerca.value.lat = center[1] // latitud
         geocerca.value.radius = res.data.radius
       })
       .catch(error => {
@@ -67,11 +67,34 @@ onMounted(() => {
 
 const submitForm = async () => {
   if (
-    !geocerca.value.lng ||
-    !geocerca.value.lat ||
-    !geocerca.value.radius
+    geocerca.value.lng === '' ||
+    geocerca.value.lat === '' ||
+    geocerca.value.radius === ''
   ) {
     Swal.fire('Atención', 'Por favor, llena todos los campos.', 'warning')
+    return
+  }
+
+  const lngNum = Number(geocerca.value.lng)
+  const latNum = Number(geocerca.value.lat)
+  const radiusNum = Number(geocerca.value.radius)
+
+  if (isNaN(lngNum) || lngNum < -180 || lngNum > 180) {
+    Swal.fire('Error', 'La longitud debe ser un número entre -180 y 180.', 'error')
+    return
+  }
+
+  if (isNaN(latNum) || latNum < -90 || latNum > 90) {
+    Swal.fire('Error', 'La latitud debe ser un número entre -90 y 90.', 'error')
+    return
+  }
+
+  if (
+    isNaN(radiusNum) ||
+    !Number.isInteger(radiusNum) ||
+    radiusNum <= 0
+  ) {
+    Swal.fire('Error', 'El radio debe ser un número entero positivo.', 'error')
     return
   }
 
@@ -79,16 +102,15 @@ const submitForm = async () => {
     const id = route.params.id
 
     const payload = {
-      lng: geocerca.value.lng,
-      lat: geocerca.value.lat,
-      radius: parseInt(geocerca.value.radius),
+      lng: lngNum,
+      lat: latNum,
+      radius: radiusNum,
       car_id: geocerca.value.car_id,
       user_id: geocerca.value.user_id
     }
 
     if (isEdit.value) {
       await axios.put(`${baseURL}/api/geocercas/${id}`, payload)
-      //  Alerta de éxito
       Swal.fire({
         title: '¡Actualizado!',
         text: 'La geocerca se actualizó correctamente.',
@@ -99,7 +121,6 @@ const submitForm = async () => {
       })
     } else {
       await axios.post(`${baseURL}/api/geocercas`, payload)
-      //  Alerta de éxito
       Swal.fire({
         title: '¡Registrado!',
         text: 'La geocerca se registró correctamente.',
