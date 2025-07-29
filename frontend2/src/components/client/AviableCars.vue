@@ -72,7 +72,7 @@ export default {
       if (!imagePath) {
         return '/default-car.png' // Puedes cambiar por una imagen por defecto si quieres
       }
-      return `http://localhost:3000${imagePath}`
+      return `${baseURL}${imagePath}`
     }
   },
   mounted() {

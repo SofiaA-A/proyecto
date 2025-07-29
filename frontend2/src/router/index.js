@@ -12,14 +12,14 @@ import CarRoute from '../components/client/CarRoute.vue'
 import AviableCars from '@/components/client/AviableCars.vue'
 
 // Componentes del admin
-import UserList from '../components/admin/userList.vue'
-import CarList from '../components/admin/carList.vue'
-import CarForm from '../components/admin/carForm.vue'
-import RouteList from '../components/admin/routeList.vue'
+import UserList from '../components/admin/Users/userList.vue'
+import CarList from '../components/admin/Cars/carList.vue'
+import CarForm from '../components/admin/Cars/carForm.vue'
+import RouteList from '../components/admin/Routes/routeList.vue'
 import adminDashboard from '../components/admin/adminDashboard.vue'
-import createRoute from '../components/admin/createRoute.vue'
-import userForm from '../components/admin/userForm.vue'
-import creategeocerca from '../components/admin/creategeocerca.vue'
+import createRoute from '../components/admin/Routes/createRoute.vue'
+import userForm from '../components/admin/Users/userForm.vue'
+import creategeocerca from '../components/admin/Geocerca/creategeocerca.vue'
 
 const routes = [
   { path: '/', redirect: '/login' },
@@ -33,7 +33,7 @@ const routes = [
       { path: '', redirect: 'dashboard' },
       { path: 'dashboard', component: adminDashboard },
       { path: 'users', component: UserList },
-      { path: 'users/new', component: () => import('../components/admin/userForm.vue') },
+      { path: 'users/new', component: () => import('../components/admin/Users/userForm.vue') },
       { path: '/admin/users/edit/:id', name: 'edit-user',component: userForm },
       { path: '/admin/routes/car/:carId/:userId',name: 'CarRouteAdmin',component: () => import('../components/admin/CarRouteAdmin.vue'),props: true},
       { path: 'cars', component: CarList },
