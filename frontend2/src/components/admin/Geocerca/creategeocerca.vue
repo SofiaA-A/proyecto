@@ -3,13 +3,13 @@
     <h2>{{ isEdit ? 'Editar Geocerca' : 'Agregar Geocerca' }}</h2>
     <form @submit.prevent="submitForm">
       <div class="form-group">
-        <label>Longitud:</label>
-        <input type="text" v-model="geocerca.lng" required />
+        <label>Latitud:</label>
+        <input type="text" v-model="geocerca.lat" required />
       </div>
 
       <div class="form-group">
-        <label>Latitud:</label>
-        <input type="text" v-model="geocerca.lat" required />
+        <label>Longitud:</label>
+        <input type="text" v-model="geocerca.lng" required />
       </div>
 
       <div class="form-group">

@@ -2,11 +2,11 @@
   <div class="car-info">
     <h2>Auto asignado</h2>
     <div v-if="car">
-      <img :src="`http://localhost:3000${car.image}`" alt="Imagen del auto" style="width: 300px;" />
+      <img :src="`${baseURL}${car.image}`" alt="Imagen del auto" style="width: 300px;" />
       <p><strong>Marca:</strong> {{ car.brand }}</p>
       <p><strong>Modelo:</strong> {{ car.model }}</p>
       <p><strong>Placa:</strong> {{ car.plate }}</p>
-      <P><strong>Año:</strong> {{ car.year }}</P>
+      <p><strong>Año:</strong> {{ car.year }}</p>
     </div>
     <div v-else>
       <p>No se encontró ningún auto asignado.</p>
@@ -16,13 +16,14 @@
 
 <script>
 import axios from 'axios';
-const baseURL = import.meta.env.VITE_API_URL
+const baseURL = import.meta.env.VITE_API_URL;
 
 export default {
   name: 'CarInfo',
   data() {
     return {
-      car: null
+      car: null,
+      baseURL
     };
   },
   mounted() {
@@ -30,17 +31,19 @@ export default {
   },
   methods: {
     async fetchCar() {
-      const userId = localStorage.getItem('user_id');
-      console.log("Obteniendo auto del usuario:", userId); // Debug
-
-      if (!userId) {
-        console.error('No hay user_id en localStorage');
+      const userRaw = localStorage.getItem('user');
+      if (!userRaw) {
+        console.error('No hay user en localStorage');
         return;
       }
 
+      const user = JSON.parse(userRaw);
+      const userId = user.id;
+      console.log("Obteniendo auto del usuario:", userId);
+
       try {
         const response = await axios.get(`${baseURL}/api/car/user/${userId}`);
-        console.log("Auto encontrado:", response.data); // Debug
+        console.log("Auto encontrado:", response.data);
         this.car = response.data;
       } catch (error) {
         console.error('Error al obtener el auto del usuario:', error);
@@ -49,6 +52,7 @@ export default {
   }
 };
 </script>
+
 <style scoped>
 .car-info {
   max-width: 500px;

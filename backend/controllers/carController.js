@@ -2,7 +2,7 @@ const { Car, User } = require('../models');
 const { Op } = require('sequelize');
 
 const carController = {
-  // Obtener todos los autos con su propietario (paginados) + filtro placa
+  // Obtener todos los autos con su propietario (paginados) Y filtro placa
   getAllCars: async (req, res) => {
     try {
       const page = parseInt(req.query.page) || 1;
