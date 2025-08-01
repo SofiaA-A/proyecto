@@ -85,13 +85,24 @@ export default {
       }
     },
     async loadCar(id) {
-      try {
-        const res = await axios.get(`${baseURL}/api/car/${id}`)
-        this.car = res.data
-      } catch (error) {
-        console.error('Error cargando carro:', error)
-      }
-    },
+  try {
+    const res = await axios.get(`${baseURL}/api/car/${id}`)
+    const data = res.data
+
+    this.car = {
+      brand: data.brand,
+      model: data.model,
+      plate: data.plate,
+      year: data.year,
+      user_id: data.user_id,
+      image: data.image,
+      lat: data.latlong?.coordinates?.[1] || '', // ← latitud
+      lng: data.latlong?.coordinates?.[0] || '', // ← longitud
+    }
+  } catch (error) {
+    console.error('Error cargando carro:', error)
+  }
+},
 
     handleImageUpload(event) {
       this.imageFile = event.target.files[0]
@@ -139,7 +150,7 @@ export default {
   }
 
   return Object.keys(this.errors).length === 0
-}, 
+},
 
     async submitForm() {
       if (!this.validateForm()) {
