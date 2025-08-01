@@ -95,29 +95,28 @@ exports.getAllWithoutPagination = async (req, res) => {
 // Editar usuario
 exports.editarUsuario = async (req, res) => {
   try {
-    const { id } = req.params
-    const { name, lastname, email, password, role } = req.body
+    const { id } = req.params;
+    const { name, lastname, email, password, role } = req.body;
 
-    const usuario = await User.findByPk(id)
-    if (!usuario) return res.status(404).json({ message: 'Usuario no encontrado' })
+    const usuario = await User.findByPk(id);
+    if (!usuario) return res.status(404).json({ message: 'Usuario no encontrado' });
 
-    // Si se subió una nueva imagen, usamos su path; si no, conservamos la existente
-    const image = req.file ? `/images/${req.file.filename}` : usuario.image
+    const image = req.file ? `/ImagesUsers/${req.file.filename}` : usuario.image;
 
-    // Actualiza la contraseña solo si se envió
-    let updatedFields = { name, lastname, email, role, image }
+    let updatedFields = { name, lastname, email, role, image };
+
     if (password && password.trim() !== '') {
-      const hashedPassword = await bcrypt.hash(password, 10)
-      updatedFields.password = hashedPassword
+      const hashedPassword = await bcrypt.hash(password, 10);
+      updatedFields.password = hashedPassword;
     }
 
-    await usuario.update(updatedFields)
+    await usuario.update(updatedFields);
 
-    res.json({ message: 'Usuario actualizado correctamente', user: usuario })
+    res.json({ message: 'Usuario actualizado correctamente', user: usuario });
   } catch (error) {
-    res.status(500).json({ message: 'Error al actualizar usuario', error: error.message })
+    res.status(500).json({ message: 'Error al actualizar usuario', error: error.message });
   }
-}
+};
 
 // Eliminar usuario
 exports.eliminarUsuario = async (req, res) => {
