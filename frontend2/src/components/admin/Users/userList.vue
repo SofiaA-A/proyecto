@@ -11,7 +11,6 @@
         <option :value="10">10</option>
       </select>
     </div>
-<td></td>
 
     <!-- Filtros -->
     <div class="filters mb-4">

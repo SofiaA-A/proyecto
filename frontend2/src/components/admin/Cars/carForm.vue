@@ -97,49 +97,49 @@ export default {
       this.imageFile = event.target.files[0]
     },
 
-    validateForm() {
-      this.errors = {}
+ validateForm() {
+  this.errors = {}
 
-      if (!this.car.brand.trim()) {
-        this.errors.brand = 'La marca es obligatoria.'
-      }
+  if (!this.car.brand || this.car.brand.toString().trim() === '') {
+    this.errors.brand = 'La marca es obligatoria.'
+  }
 
-      if (!this.car.model.trim()) {
-        this.errors.model = 'El modelo es obligatorio.'
-      }
+  if (!this.car.model || this.car.model.toString().trim() === '') {
+    this.errors.model = 'El modelo es obligatorio.'
+  }
 
-      if (!this.car.plate.trim()) {
-        this.errors.plate = 'La placa es obligatoria.'
-      }
+  if (!this.car.plate || this.car.plate.toString().trim() === '') {
+    this.errors.plate = 'La placa es obligatoria.'
+  }
 
-      if (!this.car.year.trim()) {
-      this.errors.year = 'El año es obligatorio.'
-    } else if (!/^\d{4}$/.test(this.car.year)) {
-      this.errors.year = 'El año debe ser un número de 4 dígitos.'
-    } else {
-      const yearNum = parseInt(this.car.year, 10)
-      if (yearNum < 1980 || yearNum > 2026) {
-        this.errors.year = 'El año debe estar entre 1980 y 2026.'
-      }
+  const yearStr = this.car.year?.toString().trim()
+  if (!yearStr) {
+    this.errors.year = 'El año es obligatorio.'
+  } else if (!/^\d{4}$/.test(yearStr)) {
+    this.errors.year = 'El año debe ser un número de 4 dígitos.'
+  } else {
+    const yearNum = parseInt(yearStr, 10)
+    if (yearNum < 1980 || yearNum > 2026) {
+      this.errors.year = 'El año debe estar entre 1980 y 2026.'
     }
+  }
 
+  const latStr = this.car.lat?.toString().trim()
+  if (!latStr) {
+    this.errors.lat = 'La latitud es obligatoria.'
+  } else if (isNaN(parseFloat(latStr))) {
+    this.errors.lat = 'La latitud debe ser un número válido.'
+  }
 
-      if (!this.car.lat.trim()) {
-        this.errors.lat = 'La latitud es obligatoria.'
-      } else if (isNaN(parseFloat(this.car.lat))) {
-        this.errors.lat = 'La latitud debe ser un número válido.'
-      }
+  const lngStr = this.car.lng?.toString().trim()
+  if (!lngStr) {
+    this.errors.lng = 'La longitud es obligatoria.'
+  } else if (isNaN(parseFloat(lngStr))) {
+    this.errors.lng = 'La longitud debe ser un número válido.'
+  }
 
-      if (!this.car.lng.trim()) {
-        this.errors.lng = 'La longitud es obligatoria.'
-      } else if (isNaN(parseFloat(this.car.lng))) {
-        this.errors.lng = 'La longitud debe ser un número válido.'
-      }
-
-      // No validamos propietario ni imagen porque pueden ser opcionales
-
-      return Object.keys(this.errors).length === 0
-    },
+  return Object.keys(this.errors).length === 0
+}, 
 
     async submitForm() {
       if (!this.validateForm()) {
