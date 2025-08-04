@@ -9,7 +9,7 @@ router.post('/register', UploadsUsers.single('image'), userController.crearUsuar
 router.get('/', userController.getAll);
 
 // Mostrar todos los usuarios sin paginación
-router.get('/all', userController.getAllWithoutPagination);
+router.get('/list', userController.getAllWithoutPagination);
 
 // Mostrar usuario por ID
 router.get('/:id', userController.getUserById);
